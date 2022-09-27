@@ -34,6 +34,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Create .env file
+        run: |
+          touch .env
+          echo PORT=${{ secrets.PORT }} >> .env
+          echo DBHOST=${{ secrets.DBHOST }} >> .env
+          echo DBUSERNAME=${{ secrets.DBUSERNAME }} >> .env
+          echo DBPASSWORD=${{ secrets.DBPASSWORD }} >> .env
+          echo DBDATABASE=${{ secrets.DBDATABASE }} >> .env
+          echo DBPORT=${{ secrets.DBPORT }} >> .env
+          echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
+          cat .env
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
