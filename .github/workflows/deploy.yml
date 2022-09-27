@@ -3,7 +3,7 @@ name: Deploy Prography
 on:
   push:
     branches:
-      - main
+      - master
 env:
   ECR_REGISTRY: 594292838648.dkr.ecr.ap-northeast-2.amazonaws.com/prography-homepage-renewal
   ECR_REPOSITORY: prography-homepage-renewal
