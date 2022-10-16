@@ -1,6 +1,8 @@
 import {
   Column,
   Entity,
+  JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -23,8 +25,10 @@ export class Parts {
   generation: Generations;
 
   @OneToOne((type) => Applications, (application) => application.part)
+  @JoinColumn()
   application: Applications;
 
   @ManyToMany((type) => Questions, (question) => question.parts)
+  @JoinTable()
   questions: Questions[];
 }
