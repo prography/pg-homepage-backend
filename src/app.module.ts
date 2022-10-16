@@ -8,6 +8,9 @@ import { Applications } from './infra/entity/Applications.entity';
 import { Generations } from './infra/entity/Generations.entity';
 import { Parts } from './infra/entity/Parts.entity';
 import { Portfolios } from './infra/entity/Portpolios.entity';
+import { Questions } from './infra/entity/Questions.entity';
+import { SelectOptions } from './infra/entity/SelectOptions.entity';
+import { Users } from './infra/entity/Users.entity';
 
 @Module({
   imports: [
@@ -30,7 +33,16 @@ import { Portfolios } from './infra/entity/Portpolios.entity';
         password: configService.get('DBPASSWORD'),
         database: configService.get('DBDATABASE'),
         namingStrategy: new SnakeNamingStrategy(),
-        entities: [Answer, Applications, Generations, Parts, Portfolios],
+        entities: [
+          Answer,
+          Applications,
+          Generations,
+          Parts,
+          Portfolios,
+          Questions,
+          SelectOptions,
+          Users,
+        ],
         synchronize: true,
       }),
     }),

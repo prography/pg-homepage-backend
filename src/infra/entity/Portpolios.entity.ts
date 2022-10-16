@@ -1,15 +1,13 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
 @Entity()
-export class Sample {
+export class Portfolios {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  firstName: string;
+  imageUrl: string;
 
   @Column()
-  lastName: string;
-
-  @Column({ default: true })
-  isActive: boolean;
+  teamName: string;
 }
