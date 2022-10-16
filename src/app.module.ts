@@ -1,14 +1,22 @@
 import { ApiModule } from '@modules/api.module';
-import { Sample } from '@modules/sample/entities';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { Answer } from './infra/entity/Answers.entity';
+import { Applications } from './infra/entity/Applications.entity';
+import { Generations } from './infra/entity/Generations.entity';
+import { Parts } from './infra/entity/Parts.entity';
+import { Portfolios } from './infra/entity/Portpolios.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      envFilePath:
+        process.env.NODE_ENV === 'development'
+          ? ['.development.env', '.env']
+          : ['.env', '.development.env'],
       cache: true,
     }),
     TypeOrmModule.forRootAsync({
@@ -21,7 +29,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.get('DBUSERNAME'),
         password: configService.get('DBPASSWORD'),
         database: configService.get('DBDATABASE'),
-        entities: [Sample],
+        namingStrategy: new SnakeNamingStrategy(),
+        entities: [Answer, Applications, Generations, Parts, Portfolios],
         synchronize: true,
       }),
     }),
