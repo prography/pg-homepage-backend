@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Questions } from './Questions.entity';
 
 @Entity()
 export class SelectOptions {
@@ -10,4 +11,7 @@ export class SelectOptions {
 
   @Column()
   optionNumber: number;
+
+  @ManyToOne((type) => Questions, (question) => question.selectOptions)
+  question: Questions;
 }

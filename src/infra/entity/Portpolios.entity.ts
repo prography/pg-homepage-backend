@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Generations } from './Generations.entity';
 
 @Entity()
 export class Portfolios {
@@ -10,4 +11,16 @@ export class Portfolios {
 
   @Column()
   teamName: string;
+
+  @Column('text', { array: true })
+  teamMembers: string[];
+
+  @Column()
+  projectName: string;
+
+  @Column()
+  projectDescription: string;
+
+  @ManyToOne((type) => Generations, (generation) => generation.portfolios)
+  generation: Generations;
 }

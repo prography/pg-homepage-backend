@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { Answer } from './infra/entity/Answers.entity';
+import { Answers } from './infra/entity/Answers.entity';
 import { Applications } from './infra/entity/Applications.entity';
 import { Generations } from './infra/entity/Generations.entity';
 import { Parts } from './infra/entity/Parts.entity';
@@ -34,7 +34,7 @@ import { Users } from './infra/entity/Users.entity';
         database: configService.get('DBDATABASE'),
         namingStrategy: new SnakeNamingStrategy(),
         entities: [
-          Answer,
+          Answers,
           Applications,
           Generations,
           Parts,
