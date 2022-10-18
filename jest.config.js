@@ -12,6 +12,7 @@ module.exports = {
     '^@common/(.*)$': '<rootDir>/common/$1',
     '^@config/(.*)$': '<rootDir>/config/$1',
     '^@modules/(.*)$': '<rootDir>/modules/$1',
+    '^@infra/(.*)$': '<rootDir>/infra/$1',
   },
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
