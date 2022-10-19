@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Generations } from 'src/infra/entity/Generations.entity';
+import { DeleteResult } from 'typeorm';
 import { GenerationRepository } from '../repository/generation.repository';
 
 export type GenerationStructure = {
@@ -14,11 +15,11 @@ export type GenerationStructure = {
 export class GenerationService {
   constructor(private generationRepository: GenerationRepository) {}
 
-  async findAll() {
+  async findAll(): Promise<Generations[]> {
     return await this.generationRepository.find();
   }
 
-  async findById(id: number) {
+  async findById(id: number): Promise<Generations> {
     this.generationRepository;
     return await this.generationRepository.findOneBy({ id: id });
   }
@@ -48,7 +49,7 @@ export class GenerationService {
       activityStart,
       activityEnd,
     }: GenerationStructure,
-  ) {
+  ): Promise<Generations> {
     return await this.generationRepository.save({
       name,
       applicationStart,
@@ -58,7 +59,7 @@ export class GenerationService {
     });
   }
 
-  async deleteById(id: number) {
+  async deleteById(id: number): Promise<DeleteResult> {
     return await this.generationRepository.delete({ id });
   }
 }
