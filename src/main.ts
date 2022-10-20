@@ -1,6 +1,7 @@
+import { AllExceptionsFilter } from '@modules/common/exception-filter/all-exceptions.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 // import * as cookieParser from 'cookie-parser';
 import * as Sentry from '@sentry/node';
 import { AppModule } from './app.module';
@@ -14,6 +15,8 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.useGlobalFilters(new AllExceptionsFilter(app.get(HttpAdapterHost)));
   setupSwagger(app);
 
   app.enableCors();
