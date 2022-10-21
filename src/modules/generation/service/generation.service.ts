@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import {
+  GenerationDeleteResponseDto,
   GenerationGetResponseDto,
   GenerationPutResponseDto,
 } from '../dto/reponse-generation.dto';
@@ -66,7 +67,7 @@ export class GenerationService {
     return { affected: updateResult.affected };
   }
 
-  async deleteGenerationById(id: number): Promise<GenerationPutResponseDto> {
+  async deleteGenerationById(id: number): Promise<GenerationDeleteResponseDto> {
     const deleteResult: DeleteResult =
       await this.generationRepository.deleteById(id);
     if (!deleteResult.affected || deleteResult.affected < 1) {
