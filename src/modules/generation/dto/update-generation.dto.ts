@@ -1,3 +1,3 @@
 import { GenerationCreateDto } from './create-generation.dto';
 
-export class GenerationUpdateDto extends GenerationCreateDto {}
+export class GenerationPutDto extends GenerationCreateDto {}
