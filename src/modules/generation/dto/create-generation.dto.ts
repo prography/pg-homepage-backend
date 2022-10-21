@@ -29,7 +29,7 @@ export class GenerationCreateDto {
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '2022-02-30',
+    example: '2022-02-02',
     description: '활동 종료일',
     required: true,
   })
