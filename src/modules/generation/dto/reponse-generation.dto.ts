@@ -6,9 +6,12 @@ export class GenerationGetResponseDto extends GenerationCreateDto {
   id: number;
 }
 
+export class GenerationPutResponseDto {
+  @ApiProperty({ description: '변경된 row 갯수', example: '1' })
+  affected: number;
+}
+
 export class GenerationDeleteResponseDto {
-  @ApiProperty({ description: '변동 사항', example: '' })
-  raw: string;
   @ApiProperty({ description: '변경된 row 갯수', example: '1' })
   affected: number;
 }
