@@ -1,9 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { Generations } from 'src/infra/entity/Generations.entity';
-import { DeleteResult } from 'typeorm';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { DeleteResult, UpdateResult } from 'typeorm';
+import {
+  GenerationGetResponseDto,
+  GenerationPutResponseDto,
+} from '../dto/reponse-generation.dto';
 import { GenerationRepository } from '../repository/generation.repository';
 
-export type GenerationStructure = {
+export type GenerationServiceDto = {
   applicationStart: Date;
   applicationEnd: Date;
   activityStart: Date;
@@ -15,23 +18,22 @@ export type GenerationStructure = {
 export class GenerationService {
   constructor(private generationRepository: GenerationRepository) {}
 
-  async findAll(): Promise<Generations[]> {
-    return await this.generationRepository.find();
+  async findAllGeneration(): Promise<GenerationGetResponseDto[]> {
+    return await this.generationRepository.findAll();
   }
 
-  async findById(id: number): Promise<Generations> {
-    this.generationRepository;
-    return await this.generationRepository.findOneBy({ id: id });
+  async findOneGenerationById(id: number): Promise<GenerationGetResponseDto> {
+    return await this.generationRepository.findOneById(id);
   }
 
-  async create({
+  async saveGeneration({
     name,
     applicationStart,
     applicationEnd,
     activityStart,
     activityEnd,
-  }: GenerationStructure): Promise<Generations> {
-    return await this.generationRepository.save({
+  }: GenerationServiceDto): Promise<GenerationGetResponseDto> {
+    return await this.generationRepository.create({
       name,
       applicationStart,
       applicationEnd,
@@ -40,7 +42,7 @@ export class GenerationService {
     });
   }
 
-  async updateById(
+  async updateGenerationById(
     id: number,
     {
       name,
@@ -48,18 +50,28 @@ export class GenerationService {
       applicationEnd,
       activityStart,
       activityEnd,
-    }: GenerationStructure,
-  ): Promise<Generations> {
-    return await this.generationRepository.save({
-      name,
-      applicationStart,
-      applicationEnd,
-      activityStart,
-      activityEnd,
-    });
+    }: GenerationServiceDto,
+  ): Promise<GenerationPutResponseDto> {
+    const updateResult: UpdateResult =
+      await this.generationRepository.updateById(id, {
+        name,
+        applicationStart,
+        applicationEnd,
+        activityStart,
+        activityEnd,
+      });
+    if (!updateResult.affected || updateResult.affected < 1) {
+      throw new HttpException('없는 기수입니다.', HttpStatus.NOT_FOUND);
+    }
+    return { affected: updateResult.affected };
   }
 
-  async deleteById(id: number): Promise<DeleteResult> {
-    return await this.generationRepository.delete({ id });
+  async deleteGenerationById(id: number): Promise<GenerationPutResponseDto> {
+    const deleteResult: DeleteResult =
+      await this.generationRepository.deleteById(id);
+    if (!deleteResult.affected || deleteResult.affected < 1) {
+      throw new HttpException('없는 기수입니다.', HttpStatus.NOT_FOUND);
+    }
+    return { affected: deleteResult.affected };
   }
 }
