@@ -1,8 +1,8 @@
 import { HealthCheckModule } from '@core/health-check';
 import { Module } from '@nestjs/common';
-import { SampleModule } from './sample';
+import { GenerationModule } from './generation/generation.module';
 
 @Module({
-  imports: [HealthCheckModule, SampleModule],
+  imports: [HealthCheckModule, GenerationModule],
 })
 export class ApiModule {}
