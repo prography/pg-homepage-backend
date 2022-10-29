@@ -5,7 +5,7 @@ export class GenerationCreateDto {
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '2022-01-01',
+    example: 'YYYY-MM-DD',
     description: '지원 시작일',
     required: true,
   })
@@ -13,7 +13,7 @@ export class GenerationCreateDto {
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '2022-01-30',
+    example: 'YYYY-MM-DD',
     description: '지원 마감일',
     required: true,
   })
@@ -21,7 +21,7 @@ export class GenerationCreateDto {
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '2022-02-01',
+    example: 'YYYY-MM-DD',
     description: '활동 시작일',
     required: true,
   })
@@ -29,7 +29,7 @@ export class GenerationCreateDto {
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
-    example: '2022-02-02',
+    example: 'YYYY-MM-DD',
     description: '활동 종료일',
     required: true,
   })

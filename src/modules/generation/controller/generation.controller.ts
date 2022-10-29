@@ -19,6 +19,7 @@ import {
 import { GenerationCreateDto } from '../dto/create-generation.dto';
 import {
   GenerationDeleteResponseDto,
+  GenerationGetCurrentResponseDto,
   GenerationGetResponseDto,
   GenerationPutResponseDto,
 } from '../dto/reponse-generation.dto';
@@ -39,10 +40,29 @@ export class GenerationController {
     return await this.generationService.findAllGeneration();
   }
 
+  @Get('/current')
+  @ApiOperation({ summary: '활동 기수 조회' })
+  @ApiOkResponse({
+    description: 'isActive는 활동기간 여부, isApplying은 지원기간 여부를 뜻함',
+    type: GenerationGetCurrentResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: '현재 활동 기수가 없습니다. ',
+    type: ErrorDto,
+  })
+  async generationSelectOneByCurrentDate() {
+    const findResult =
+      await this.generationService.findOneGenerationByCurrentDate();
+    if (!findResult) {
+      throw new HttpException('활동 기수가 없습니다.', HttpStatus.NOT_FOUND);
+    }
+    return findResult;
+  }
+
   @Get(':id')
   @ApiOperation({ summary: '특정 기수 조회' })
   @ApiOkResponse({ type: GenerationGetResponseDto })
-  //@ApiNotFoundResponse({ description: '해당 기수가 없음', type: ErrorDto })
+  @ApiNotFoundResponse({ description: '해당 기수가 없음', type: ErrorDto })
   async generationSelectOne(@Param('id') id: number) {
     const findResult = await this.generationService.findOneGenerationById(id);
     if (!findResult) {

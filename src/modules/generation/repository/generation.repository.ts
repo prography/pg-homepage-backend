@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Generations } from 'src/infra/entity/Generations.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import {
+  DeleteResult,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 
 export type GenerationRepositoryDto = {
   applicationStart: Date;
@@ -20,6 +26,27 @@ export class GenerationRepository {
 
   async findAll(): Promise<Generations[]> {
     return await this.generationRepository.find();
+  }
+
+  async findOneByDate(targetDate: Date): Promise<Generations> {
+    const targetStartDate = new Date(targetDate);
+    const targetEndDate = new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth(),
+      targetDate.getDate() - 1,
+    );
+    return await this.generationRepository.findOne({
+      where: [
+        {
+          applicationStart: LessThanOrEqual(targetStartDate),
+          applicationEnd: MoreThanOrEqual(targetEndDate),
+        },
+        {
+          activityStart: LessThanOrEqual(targetStartDate),
+          activityEnd: MoreThanOrEqual(targetEndDate),
+        },
+      ],
+    });
   }
 
   async findOneById(id: number): Promise<Generations> {
