@@ -9,16 +9,16 @@ export class Generations {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'date' })
   applicationStart: Date;
 
-  @Column()
+  @Column({ type: 'date' })
   applicationEnd: Date;
 
-  @Column()
+  @Column({ type: 'date' })
   activityStart: Date;
 
-  @Column()
+  @Column({ type: 'date' })
   activityEnd: Date;
 
   @Column()

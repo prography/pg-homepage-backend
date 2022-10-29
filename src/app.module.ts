@@ -44,6 +44,7 @@ import { Users } from './infra/entity/Users.entity';
           Users,
         ],
         synchronize: true,
+        timezone: '+09:00',
       }),
     }),
     ApiModule,

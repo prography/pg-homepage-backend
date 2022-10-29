@@ -1,7 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import * as moment from 'moment';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import {
   GenerationDeleteResponseDto,
+  GenerationGetCurrentResponseDto,
   GenerationGetResponseDto,
   GenerationPutResponseDto,
 } from '../dto/reponse-generation.dto';
@@ -21,6 +23,58 @@ export class GenerationService {
 
   async findAllGeneration(): Promise<GenerationGetResponseDto[]> {
     return await this.generationRepository.findAll();
+  }
+
+  async findOneGenerationByCurrentDate(): Promise<GenerationGetCurrentResponseDto> {
+    const currentTime = new Date();
+    const convertTime = moment(currentTime).utc().format('YYYY-MM-DD');
+    const currentDate: Date = new Date(convertTime);
+    const currentGenerationState = { isActive: false, isApplying: false };
+    const currentGeneration = await this.generationRepository.findOneByDate(
+      currentDate,
+    );
+    if (!currentGeneration) {
+      return null;
+    }
+    if (
+      this.isActive(
+        currentDate,
+        currentGeneration.applicationStart,
+        currentGeneration.applicationEnd,
+      )
+    ) {
+      currentGenerationState.isApplying = true;
+    }
+    if (
+      this.isActive(
+        currentDate,
+        currentGeneration.activityStart,
+        currentGeneration.activityEnd,
+      )
+    ) {
+      currentGenerationState.isActive = true;
+    }
+
+    return { ...currentGeneration, ...currentGenerationState };
+  }
+
+  private isActive(currentDate: Date, startDate: Date, endDate: Date): boolean {
+    if (
+      this.changeDay(startDate, -1) <= currentDate &&
+      currentDate <= this.changeDay(endDate, +1)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private changeDay(targetDate: Date, count: number): Date {
+    const date = new Date(targetDate);
+    return new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + count,
+    );
   }
 
   async findOneGenerationById(id: number): Promise<GenerationGetResponseDto> {
