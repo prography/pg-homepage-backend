@@ -11,6 +11,7 @@ import { QuestionModule } from './question/question.module';
     GenerationModule,
     AuthModule,
     PartModule,
+    QuestionModule,
   ],
 })
 export class ApiModule {}
