@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { GenerationModule } from './generation/generation.module';
 import { PartModule } from './part/part.module';
 import { QuestionModule } from './question/question.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { QuestionModule } from './question/question.module';
     AuthModule,
     PartModule,
     QuestionModule,
+    UserModule,
   ],
 })
 export class ApiModule {}
