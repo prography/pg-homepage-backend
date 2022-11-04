@@ -15,5 +15,5 @@ export class PartCreateDto extends PartNameDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({ description: '기수 고유 번호', example: '3', required: true })
-  readonly generation: number;
+  readonly generationId: number;
 }
