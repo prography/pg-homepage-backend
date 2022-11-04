@@ -24,7 +24,7 @@ export class SelectOptionCreateDto {
     example: 1,
     required: true,
   })
-  readonly option_number: number;
+  readonly optionNumber: number;
 }
 export class QuestionCreateBaseDto {
   @IsString()
