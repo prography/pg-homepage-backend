@@ -5,6 +5,7 @@ import { GenerationModule } from './generation/generation.module';
 import { PartModule } from './part/part.module';
 import { QuestionModule } from './question/question.module';
 import { UserModule } from './user/user.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UserModule } from './user/user.module';
     PartModule,
     QuestionModule,
     UserModule,
+    ApplicationModule,
   ],
 })
 export class ApiModule {}

@@ -6,4 +6,9 @@ export class UserGetDto extends UserCreateDto {
     description: '사용자 id',
   })
   userId: number;
+
+  @ApiProperty({
+    description: '지원서 id',
+  })
+  applicationId: number;
 }
