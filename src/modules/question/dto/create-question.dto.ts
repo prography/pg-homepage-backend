@@ -11,8 +11,8 @@ export class SelectOptionCreateDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
-    description: '질문 옵션',
-    example: '10시 30~11시30',
+    description: '객관식 문항의 보기',
+    example: '11시 00분 면접 가능',
     required: true,
   })
   readonly value: string;
