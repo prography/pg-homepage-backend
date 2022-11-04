@@ -48,8 +48,8 @@ export class QuestionCreateBaseDto {
   @Matches(/^(shortAnswer)|(^essay&)&/)
   @IsString()
   @ApiProperty({
-    enum: ['shortAnswer', 'essay'],
-    description: '질문 형식 결정 기본은 essay 주관식 shortAnswer은 객관식',
+    enum: ['choice', 'essay'],
+    description: '질문 형식 결정 기본은 essay 주관식 choice 객관식',
   })
   readonly type?: 'essay' | 'shortAnswer';
 
