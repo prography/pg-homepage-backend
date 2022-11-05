@@ -44,6 +44,9 @@ jobs:
           echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           echo SENTRY_DSN=${{ secrets.SENTRY_DSN }} >> .env
+          echo ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} >> .env
+          echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
+          echo JWT_EXPIRES_IN_SECONDS=${{ secrets.JWT_EXPIRES_IN_SECONDS }} >> .env
           cat .env
 
       - name: Build, tag, and push image to Amazon ECR
