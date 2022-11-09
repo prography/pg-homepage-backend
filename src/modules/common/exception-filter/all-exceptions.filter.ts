@@ -4,6 +4,7 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { ErrorDto } from '../dto/error.dto';
@@ -33,7 +34,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       message: httpMessage,
     };
-    console.log(`Time: ${new Date().toISOString()}\nErrorCode: ${exception}\n`);
+    Logger.log('error', exception);
+    console.log(exception);
     //Logger 변경하기
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }

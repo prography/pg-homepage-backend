@@ -9,5 +9,6 @@ import { GenerationService } from './service/generation.service';
   imports: [TypeOrmModule.forFeature([Generations])],
   controllers: [GenerationController],
   providers: [GenerationService, GenerationRepository],
+  exports: [GenerationRepository],
 })
 export class GenerationModule {}
