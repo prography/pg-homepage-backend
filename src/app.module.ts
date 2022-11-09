@@ -1,6 +1,7 @@
 import { ApiModule } from '@modules/api.module';
-import { Module } from '@nestjs/common';
+import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Answers } from './infra/entity/Answers.entity';
@@ -48,8 +49,16 @@ import { Users } from './infra/entity/Users.entity';
       }),
     }),
     ApiModule,
+    CacheModule.register({
+      isGlobal: true,
+    }),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}
