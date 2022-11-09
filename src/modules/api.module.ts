@@ -1,11 +1,14 @@
 import { HealthCheckModule } from '@core/health-check';
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
+import { AwsModule } from './aws/aws.module';
 import { GenerationModule } from './generation/generation.module';
 import { PartModule } from './part/part.module';
 import { QuestionModule } from './question/question.module';
 import { UserModule } from './user/user.module';
 import { ApplicationModule } from './application/application.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
+
 
 @Module({
   imports: [
@@ -16,6 +19,8 @@ import { ApplicationModule } from './application/application.module';
     QuestionModule,
     UserModule,
     ApplicationModule,
+    PortfolioModule,
+    AwsModule,
   ],
 })
 export class ApiModule {}

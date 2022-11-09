@@ -47,6 +47,8 @@ jobs:
           echo ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} >> .env
           echo JWT_SECRET=${{ secrets.JWT_SECRET }} >> .env
           echo JWT_EXPIRES_IN_SECONDS=${{ secrets.JWT_EXPIRES_IN_SECONDS }} >> .env
+          echo AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} >> .env
+          echo AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} >> .env
           cat .env
 
       - name: Build, tag, and push image to Amazon ECR
