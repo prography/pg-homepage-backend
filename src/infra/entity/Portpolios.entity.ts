@@ -13,7 +13,7 @@ export class Portfolios {
   teamName: string;
 
   @Column()
-  //member는 json형태로 저장되고, 불러와야 함. JSON.stringify(string[]) 의 형태
+  //JSON.stringify(string[]) 의 형태
   teamMembers: string;
 
   @Column()
@@ -21,6 +21,10 @@ export class Portfolios {
 
   @Column('text')
   projectDescription: string;
+
+  @Column()
+  //JSON.stringify(string[]) 의 형태
+  frameworks: string;
 
   @ManyToOne((type) => Generations, (generation) => generation.portfolios)
   generation: Generations;
