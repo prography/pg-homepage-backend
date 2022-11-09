@@ -7,6 +7,7 @@ export const ApiMultiFile =
       type: 'multipart/form-data',
       required: true,
       schema: {
+        $ref: '#/components/schemas/',
         type: 'object',
         properties: {
           [fileName]: {
@@ -30,6 +31,9 @@ export const ApiMultiFile =
           },
           generationId: {
             type: 'number',
+          },
+          frameworks: {
+            type: 'string',
           },
         },
       },
