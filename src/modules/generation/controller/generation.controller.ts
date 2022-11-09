@@ -13,6 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -31,7 +32,6 @@ import { GenerationService } from '../service/generation.service';
 @Controller({
   path: 'generations',
 })
-@UseGuards(JwtAuthGuard)
 @ApiTags('Generation')
 export class GenerationController {
   constructor(private readonly generationService: GenerationService) {}
@@ -75,6 +75,8 @@ export class GenerationController {
   }
 
   @Post()
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '기수 등록' })
   @ApiOkResponse({ type: GenerationCreateDto })
   async generationCreate(@Body() createGenerationDto: GenerationCreateDto) {
@@ -82,6 +84,8 @@ export class GenerationController {
   }
 
   @Put(':id')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '특정 기수 수정' })
   @ApiOkResponse({
     description: 'affected는 변경된 row의 갯수',
@@ -99,6 +103,8 @@ export class GenerationController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '특정 기수 제거' })
   @ApiOkResponse({
     description: 'affected는 변경된 row의 갯수',

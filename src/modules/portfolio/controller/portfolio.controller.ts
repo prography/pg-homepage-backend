@@ -1,4 +1,5 @@
 import { ApiMultiFile } from '@core/swagger/swagger.type';
+import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
@@ -9,11 +10,13 @@ import {
   Post,
   Put,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConsumes,
   ApiOkResponse,
   ApiOperation,
@@ -44,6 +47,8 @@ export class PortfolioController {
   }
 
   @Post('/')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '포트폴리오 저장' })
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
@@ -60,6 +65,8 @@ export class PortfolioController {
   }
 
   @Put(':portfolioid')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '특정 포트폴리오 수정' })
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
@@ -81,6 +88,8 @@ export class PortfolioController {
   }
 
   @Delete(':portfolioid')
+  @ApiBearerAuth('access-token')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '특정 포트폴리오 제거' })
   @ApiOkResponse({
     description: 'affected는 변경된 row의 갯수',
