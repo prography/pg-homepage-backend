@@ -17,8 +17,8 @@ export class AwsRepository {
     AWS.config.update({
       region: 'ap-northeast-2',
       credentials: {
-        accessKeyId: configService.get('AWS_ACCESS_KEY'),
-        secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
+        accessKeyId: this.configService.get('AWS_ACCESS_KEY'),
+        secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
       },
     });
   }
