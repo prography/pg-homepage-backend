@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsJSON, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class PortfolioControllerDto {
@@ -37,9 +38,19 @@ export class PortfolioControllerDto {
     required: true,
   })
   readonly projectDescription: string;
+
+  @IsNotEmpty()
+  @IsJSON()
+  @ApiProperty({
+    example: `["React","Spring","Nest.js"]`,
+    description: '프레임워크 종류',
+    required: true,
+  })
+  readonly frameworks: string;
 }
 
 export class PortfolioCreateDto extends PortfolioControllerDto {
+  @Type(() => Number)
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({

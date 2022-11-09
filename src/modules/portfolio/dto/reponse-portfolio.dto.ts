@@ -18,3 +18,10 @@ export class PortfolioGetResponseDto extends PortfolioControllerDto {
   imageUrl: string;
   generation: PortfolioGenerationDto;
 }
+
+export class PortfolioPutResponseDto extends PortfolioGetResponseDto {}
+
+export class PortfolioDeleteResponseDto {
+  @ApiProperty({ description: '변경된 row 갯수', example: '1' })
+  affected: number;
+}
