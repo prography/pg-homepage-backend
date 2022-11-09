@@ -1,3 +1,4 @@
+import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
@@ -9,6 +10,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiNotFoundResponse,
@@ -29,6 +31,7 @@ import { GenerationService } from '../service/generation.service';
 @Controller({
   path: 'generations',
 })
+@UseGuards(JwtAuthGuard)
 @ApiTags('Generation')
 export class GenerationController {
   constructor(private readonly generationService: GenerationService) {}
