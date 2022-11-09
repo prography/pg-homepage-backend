@@ -2,13 +2,14 @@ import { GenerationRepository } from '@modules/generation/repository/generation.
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Portfolios } from 'src/infra/entity/Portpolios.entity';
-import { Equal, Repository } from 'typeorm';
+import { DeleteResult, Equal, Repository } from 'typeorm';
 
 export type PortfolioRepositoryDto = {
   imageUrl: string;
   teamName: string;
   teamMembers: string;
   projectName: string;
+  frameworks: string;
   projectDescription: string;
   generationId: number;
 };
@@ -30,6 +31,7 @@ export class PortfolioRepository {
         projectName: true,
         projectDescription: true,
         imageUrl: true,
+        frameworks: true,
         generation: {
           id: true,
           name: true,
@@ -39,8 +41,7 @@ export class PortfolioRepository {
     });
   }
 
-  async findById(portfolioId: number): Promise<Portfolios> {
-    console.log(portfolioId);
+  async findOneById(portfolioId: number): Promise<Portfolios> {
     return await this.portfolioRepository.findOne({
       where: { id: Equal(portfolioId) },
       select: {
@@ -50,6 +51,7 @@ export class PortfolioRepository {
         projectName: true,
         projectDescription: true,
         imageUrl: true,
+        frameworks: true,
         generation: {
           id: true,
           name: true,
@@ -59,22 +61,33 @@ export class PortfolioRepository {
     });
   }
 
-  async createOrNull(
-    portfolioData: PortfolioRepositoryDto,
-  ): Promise<Portfolios> {
-    const generationData = await this.generationRepository.findOneById(
+  async create(portfolioData: PortfolioRepositoryDto): Promise<Portfolios> {
+    const generationResult = await this.generationRepository.findOneById(
       portfolioData.generationId,
     );
-    if (!generationData) {
+    if (!generationResult) {
       return null;
     }
-    console.log({
-      generation: generationData,
-      portfolioData,
-    });
     return await this.portfolioRepository.save({
-      generation: generationData,
+      generation: generationResult,
       ...portfolioData,
     });
+  }
+
+  async updateOneById(
+    id: number,
+    portfolioData: PortfolioRepositoryDto,
+  ): Promise<Portfolios> {
+    const generationResult = await this.generationRepository.findOneById(
+      portfolioData.generationId,
+    );
+    if (!generationResult) {
+      return null;
+    }
+    return await this.portfolioRepository.save({ id, ...portfolioData });
+  }
+
+  async deleteOneById(portfolioId: number): Promise<DeleteResult> {
+    return await this.portfolioRepository.delete({ id: portfolioId });
   }
 }
