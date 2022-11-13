@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsNumber,
@@ -6,6 +6,7 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
+import { Questions } from 'src/infra/entity/Questions.entity';
 
 export class SelectOptionCreateDto {
   @IsString()
@@ -27,24 +28,6 @@ export class SelectOptionCreateDto {
   readonly optionNumber: number;
 }
 export class QuestionCreateBaseDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: '왜 이 동아리에 지원했나요',
-    description: '질문',
-    required: true,
-  })
-  readonly text: string;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({
-    example: 3,
-    description: '질문 번호',
-    required: true,
-  })
-  readonly questionNumber: number;
-
   @Matches(/^(shortAnswer)|(^essay&)&/)
   @IsString()
   @ApiProperty({
@@ -77,4 +60,14 @@ export class QuestionCreateDto extends QuestionCreateBaseDto {
     required: true,
   })
   readonly generationId: number;
+}
+
+export class CreateQuestionRequestDto extends PickType(Questions, [
+  'type',
+  'text',
+  'questionNumber',
+  'generationId',
+] as const) {
+  @IsNumber({}, { each: true })
+  partIds: number[];
 }

@@ -2,13 +2,12 @@ import { IsNumber, IsString } from 'class-validator';
 import {
   Column,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Generations } from './Generations.entity';
-import { Questions } from './Questions.entity';
+import { PartsQuestions } from './parts-questions.entity';
 
 @Entity()
 export class Parts {
@@ -26,7 +25,6 @@ export class Parts {
   @ManyToOne((type) => Generations, (generation) => generation.parts)
   generation: Generations;
 
-  @ManyToMany((type) => Questions, (question) => question.parts)
-  @JoinTable()
-  questions: Questions[];
+  @OneToMany(() => PartsQuestions, (partsQuestions) => partsQuestions.part)
+  partsQuestions: PartsQuestions[];
 }

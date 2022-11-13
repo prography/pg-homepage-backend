@@ -1,11 +1,12 @@
 import { GenerationGetResponseDto } from '@modules/generation/dto/reponse-generation.dto';
-import { PartGetResponseDto } from '@modules/part/dto/response-part.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsNotEmpty } from 'class-validator';
 import {
   SelectOptionCreateDto,
   QuestionCreateBaseDto,
 } from './create-question.dto';
+
+class PartGetResponseDto {}
 
 export class SelectOptionGetDto extends SelectOptionCreateDto {
   @IsNumber()
