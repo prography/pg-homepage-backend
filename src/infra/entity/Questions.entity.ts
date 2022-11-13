@@ -1,39 +1,60 @@
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   Entity,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Answers } from './Answers.entity';
 import { Generations } from './Generations.entity';
-import { Parts } from './Parts.entity';
+import { PartsQuestions } from './parts-questions.entity';
 import { SelectOptions } from './SelectOptions.entity';
+
+const Question = {
+  CHOICE: '객관식',
+  ESSAY: '주관식',
+} as const;
+
+type QuestionType = typeof Question[keyof typeof Question];
 
 @Entity()
 export class Questions {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsEnum(Question)
+  @ApiProperty({ enum: Object.keys(Question) })
+  @Column()
+  type: QuestionType;
+
+  @IsString()
+  @ApiProperty({ description: '질문 내용' })
   @Column()
   text: string;
 
-  @Column()
-  type: string;
-
+  @IsNumber()
+  @ApiProperty({ description: '질문 번호 - 해당 질문의 보여줄 순서 지정' })
   @Column()
   questionNumber: number;
+
+  @IsNumber()
+  @Column()
+  generationId: number;
 
   @OneToMany((type) => SelectOptions, (selectOption) => selectOption.question)
   selectOptions: SelectOptions[];
 
+  @ApiHideProperty()
   @OneToMany((type) => Answers, (answer) => answer.question)
   answers: Answers[];
 
+  @ApiHideProperty()
   @ManyToOne((type) => Generations, (generation) => generation.questions)
   generation: Generations[];
 
-  @ManyToMany((type) => Parts, (part) => part.questions)
-  parts: Parts[];
+  @ApiHideProperty()
+  @OneToMany(() => PartsQuestions, (partsQuestions) => partsQuestions.question)
+  partsQuestions: PartsQuestions[];
 }

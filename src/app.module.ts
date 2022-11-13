@@ -7,6 +7,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { Answers } from './infra/entity/Answers.entity';
 import { Applications } from './infra/entity/Applications.entity';
 import { Generations } from './infra/entity/Generations.entity';
+import { PartsQuestions } from './infra/entity/parts-questions.entity';
 import { Parts } from './infra/entity/Parts.entity';
 import { Portfolios } from './infra/entity/Portpolios.entity';
 import { Questions } from './infra/entity/Questions.entity';
@@ -43,6 +44,7 @@ import { Users } from './infra/entity/Users.entity';
           Questions,
           SelectOptions,
           Users,
+          PartsQuestions,
         ],
         synchronize: true,
         timezone: '+09:00',
@@ -53,7 +55,6 @@ import { Users } from './infra/entity/Users.entity';
       isGlobal: true,
     }),
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_INTERCEPTOR,

@@ -12,6 +12,12 @@ export class SelectOptions {
   @Column()
   optionNumber: number;
 
-  @ManyToOne((type) => Questions, (question) => question.selectOptions)
+  @Column()
+  questionId: number;
+
+  @ManyToOne((type) => Questions, (question) => question.selectOptions, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   question: Questions;
 }
