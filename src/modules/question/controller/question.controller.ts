@@ -2,11 +2,11 @@ import {
   Get,
   Controller,
   Post,
-  Patch,
   Delete,
   Body,
   Param,
   Query,
+  Put,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateQuestionRequestDto } from '../dto/create-question.dto';
@@ -32,7 +32,7 @@ export class QuestionController {
   }
 
   @ApiOperation({ summary: '질문 수정' })
-  @Patch(':id')
+  @Put(':id')
   updateQuestion(
     @Param('id') id: number,
     @Body() body: UpdateQuestionRequestDto,

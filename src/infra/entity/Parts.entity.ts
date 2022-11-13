@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
 import {
   Column,
@@ -22,9 +23,11 @@ export class Parts {
   @Column()
   generationId: number;
 
+  @ApiHideProperty()
   @ManyToOne((type) => Generations, (generation) => generation.parts)
   generation: Generations;
 
+  @ApiHideProperty()
   @OneToMany(() => PartsQuestions, (partsQuestions) => partsQuestions.part)
   partsQuestions: PartsQuestions[];
 }

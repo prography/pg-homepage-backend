@@ -5,9 +5,3 @@ export class CreatePartRequestDto extends PickType(Parts, [
   'name',
   'generationId',
 ] as const) {}
-
-export class CreatePartResponseDto extends PickType(Parts, [
-  'id',
-  'name',
-  'generationId',
-] as const) {}

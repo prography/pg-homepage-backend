@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { QuestionService } from './service/question.service';
 import { QuestionController } from './controller/question.controller';
-import { QuestionRepository } from './question/question.repository';
+import { QuestionRepository } from './repositories/question.repository';
 import { PartRepository } from '@modules/part/repository/part.repository';
-import { PartQuestionRepository } from './question/parts-questions.repository';
+import { PartQuestionRepository } from './repositories/parts-questions.repository';
+import { SelectOptionsRepository } from './repositories/select-options.repository';
 
 @Module({
   controllers: [QuestionController],
@@ -12,6 +13,7 @@ import { PartQuestionRepository } from './question/parts-questions.repository';
     QuestionRepository,
     PartRepository,
     PartQuestionRepository,
+    SelectOptionsRepository,
   ],
 })
 export class QuestionModule {}

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsString } from 'class-validator';
 import {
   Column,
@@ -25,6 +25,7 @@ export class Questions {
   id: number;
 
   @IsEnum(Question)
+  @ApiProperty({ enum: Object.keys(Question) })
   @Column()
   type: QuestionType;
 
@@ -45,12 +46,15 @@ export class Questions {
   @OneToMany((type) => SelectOptions, (selectOption) => selectOption.question)
   selectOptions: SelectOptions[];
 
+  @ApiHideProperty()
   @OneToMany((type) => Answers, (answer) => answer.question)
   answers: Answers[];
 
+  @ApiHideProperty()
   @ManyToOne((type) => Generations, (generation) => generation.questions)
   generation: Generations[];
 
+  @ApiHideProperty()
   @OneToMany(() => PartsQuestions, (partsQuestions) => partsQuestions.question)
   partsQuestions: PartsQuestions[];
 }
