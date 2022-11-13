@@ -1,19 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { Parts } from 'src/infra/entity/Parts.entity';
 
-export class PartNameDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: '파트 명',
-    required: true,
-  })
-  readonly name: string;
-}
-
-export class PartCreateDto extends PartNameDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty({ description: '기수 고유 번호', example: '3', required: true })
-  readonly generationId: number;
-}
+export class CreatePartRequestDto extends PickType(Parts, [
+  'name',
+  'generationId',
+] as const) {}
