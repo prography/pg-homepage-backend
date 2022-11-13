@@ -1,3 +1,4 @@
+import { IsNumber, IsString } from 'class-validator';
 import {
   Column,
   Entity,
@@ -5,7 +6,6 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -18,8 +18,13 @@ export class Parts {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsString()
   @Column()
-  frameworks: string;
+  name: string;
+
+  @IsNumber()
+  @Column()
+  generationId: number;
 
   @ManyToOne((type) => Generations, (generation) => generation.parts)
   generation: Generations;
