@@ -28,6 +28,6 @@ export class Applications {
   @ManyToOne((type) => Generations, (generation) => generation.applications)
   generation: Generations;
 
-  @OneToOne((type) => Parts, (part) => part.application)
+  @OneToOne((type) => Parts)
   part: Parts;
 }
