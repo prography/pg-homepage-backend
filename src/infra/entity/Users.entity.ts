@@ -1,5 +1,5 @@
 import { ApiHideProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import {
   Column,
   Entity,
@@ -15,14 +15,17 @@ export class Users {
   id: number;
 
   @IsString()
+  @IsNotEmpty()
   @Column()
   name: string;
 
   @IsString()
+  @IsNotEmpty()
   @Column()
   phoneNumber: string;
 
   @IsString()
+  @IsNotEmpty()
   @Column()
   email: string;
 
