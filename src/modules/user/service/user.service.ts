@@ -1,8 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserCreateDto } from '../dto/create-user.dto';
+import { UserChangedResultDto, UserPutDto } from '../dto/put-user.dto';
 import { UserRepository } from '../repository/user.repository';
 
+export type UserType = {
+  isAdmin?: true;
+  id?: number;
+};
 @Injectable()
 export class UserService {
   constructor(
@@ -28,4 +33,32 @@ export class UserService {
       user,
     };
   }
-}
+
+  async update(userUpdateDto: UserPutDto, userType: UserType, id: number) {
+    await this.validateId(userType, id);
+    if (!(await this.checkExistUser(id))) {
+      throw new ForbiddenException('사용자가 잘못된 데이터에 접근했습니다');
+    }
+    const updateResult = await this.userRepository.update(id, userUpdateDto);
+    return { affected: updateResult.affected };
+  }
+  private async validateId(
+    userType: UserType,
+    id: number,
+  ): Promise<UserChangedResultDto> {
+    if (this.isAdmin(userType)) {
+      return;
+    }
+    if (userType.id != id) {
+      throw new ForbiddenException('사용자가 잘못된 데이터에 접근했습니다');
+    }
+  }
+  private async checkExistUser(userId: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    if (user) {
+      return true;
+    }
+    return false;
+  }
