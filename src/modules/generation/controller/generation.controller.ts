@@ -1,5 +1,4 @@
 import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
-import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
   Controller,
@@ -14,7 +13,6 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -49,10 +47,6 @@ export class GenerationController {
     description: 'isActive는 활동기간 여부, isApplying은 지원기간 여부를 뜻함',
     type: GenerationGetCurrentResponseDto,
   })
-  @ApiNotFoundResponse({
-    description: '현재 활동 기수가 없습니다. ',
-    type: ErrorDto,
-  })
   async generationSelectOneByCurrentDate() {
     const findResult =
       await this.generationService.findOneGenerationByCurrentDate();
@@ -65,7 +59,6 @@ export class GenerationController {
   @Get(':id')
   @ApiOperation({ summary: '특정 기수 조회' })
   @ApiOkResponse({ type: GenerationGetResponseDto })
-  @ApiNotFoundResponse({ description: '해당 기수가 없음', type: ErrorDto })
   async generationSelectOne(@Param('id') id: number) {
     const findResult = await this.generationService.findOneGenerationById(id);
     if (!findResult) {
@@ -78,7 +71,6 @@ export class GenerationController {
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: '기수 등록' })
-  @ApiOkResponse({ type: GenerationCreateDto })
   async generationCreate(@Body() createGenerationDto: GenerationCreateDto) {
     return await this.generationService.saveGeneration(createGenerationDto);
   }
@@ -91,11 +83,14 @@ export class GenerationController {
     description: 'affected는 변경된 row의 갯수',
     type: GenerationPutResponseDto,
   })
-  @ApiNotFoundResponse({ description: '해당 기수가 없음', type: ErrorDto })
   async update(
     @Param('id') id: number,
     @Body() putGenerationDto: GenerationPutDto,
   ) {
+    const findResult = await this.generationService.findOneGenerationById(id);
+    if (!findResult) {
+      throw new HttpException('없는 기수입니다.', HttpStatus.NOT_FOUND);
+    }
     return await this.generationService.updateGenerationById(
       id,
       putGenerationDto,
@@ -110,12 +105,11 @@ export class GenerationController {
     description: 'affected는 변경된 row의 갯수',
     type: GenerationDeleteResponseDto,
   })
-  @ApiNotFoundResponse({ description: '해당 기수가 없음', type: ErrorDto })
   async remove(@Param('id') id: number) {
-    const deleteResult = await this.generationService.deleteGenerationById(id);
-    if (deleteResult.affected < 1) {
+    const findResult = await this.generationService.findOneGenerationById(id);
+    if (!findResult) {
       throw new HttpException('없는 기수입니다.', HttpStatus.NOT_FOUND);
     }
-    return deleteResult;
+    return await this.generationService.deleteGenerationById(id);
   }
 }

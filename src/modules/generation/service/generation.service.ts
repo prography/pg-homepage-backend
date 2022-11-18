@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import {
@@ -26,8 +26,8 @@ export class GenerationService {
   }
 
   async findOneGenerationByCurrentDate(): Promise<GenerationGetCurrentResponseDto> {
-    const currentTime = new Date();
-    const convertTime = moment(currentTime).utc().format('YYYY-MM-DD');
+    const currentTime = new Date(new Date().toLocaleDateString());
+    const convertTime = moment(currentTime).format('YYYY-MM-DD');
     const currentDate: Date = new Date(convertTime);
     const currentGenerationState = { isActive: false, isApplying: false };
     const currentGeneration = await this.generationRepository.findOneByDate(
@@ -59,22 +59,21 @@ export class GenerationService {
   }
 
   private isActive(currentDate: Date, startDate: Date, endDate: Date): boolean {
+    console.log(currentDate);
+    const currentMoment = moment(
+      `${currentDate.getFullYear()}-${
+        currentDate.getMonth() + 1
+      }-${currentDate.getDate()}`,
+    );
+    const startMoment = moment(startDate);
+    const endMoment = moment(endDate);
     if (
-      this.changeDay(startDate, -1) <= currentDate &&
-      currentDate <= this.changeDay(endDate, +1)
+      currentMoment.isSameOrAfter(startMoment) &&
+      currentMoment.isSameOrBefore(endMoment)
     ) {
       return true;
     }
     return false;
-  }
-
-  private changeDay(targetDate: Date, count: number): Date {
-    const date = new Date(targetDate);
-    return new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate() + count,
-    );
   }
 
   async findOneGenerationById(id: number): Promise<GenerationGetResponseDto> {
@@ -115,18 +114,12 @@ export class GenerationService {
         activityStart,
         activityEnd,
       });
-    if (!updateResult.affected || updateResult.affected < 1) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.NOT_FOUND);
-    }
     return { affected: updateResult.affected };
   }
 
   async deleteGenerationById(id: number): Promise<GenerationDeleteResponseDto> {
     const deleteResult: DeleteResult =
       await this.generationRepository.deleteById(id);
-    if (!deleteResult.affected || deleteResult.affected < 1) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.NOT_FOUND);
-    }
     return { affected: deleteResult.affected };
   }
 }
