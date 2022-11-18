@@ -62,3 +62,21 @@ export class UserService {
     }
     return false;
   }
+
+  private isAdmin(userType: UserType) {
+    if (userType.isAdmin) {
+      return true;
+    }
+    return false;
+  }
+  async delete(
+    userType: UserType,
+    userId: number,
+  ): Promise<UserChangedResultDto> {
+    if (this.isAdmin(userType)) {
+      throw new ForbiddenException('사용자가 잘못된 데이터에 접근했습니다');
+    }
+    const updateResult = await this.userRepository.delete(userId);
+    return { affected: updateResult.affected };
+  }
+}
