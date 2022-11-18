@@ -1,28 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { PickType } from '@nestjs/swagger';
+import { Users } from 'src/infra/entity/Users.entity';
 
-export class UserCreateDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: 'email',
-    required: true,
-  })
-  email: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: '전화번호',
-    required: true,
-  })
-  phoneNumber: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    description: '이름',
-    required: true,
-  })
-  name: string;
-}
+export class UserCreateDto extends PickType(Users, [
+  'name',
+  'phoneNumber',
+  'email',
+] as const) {}

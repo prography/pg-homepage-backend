@@ -8,7 +8,7 @@ import { QuestionModule } from './question/question.module';
 import { UserModule } from './user/user.module';
 import { ApplicationModule } from './application/application.module';
 import { PortfolioModule } from './portfolio/portfolio.module';
-
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -21,6 +21,7 @@ import { PortfolioModule } from './portfolio/portfolio.module';
     ApplicationModule,
     PortfolioModule,
     AwsModule,
+    CommonModule,
   ],
 })
 export class ApiModule {}
