@@ -13,7 +13,7 @@ export class UserService {
   async userCreate(userCreateDto: UserCreateDto) {
     const user = await this.userRepository.findWithOptions(userCreateDto);
     if (user) {
-      throw new BadRequestException('이미 존재하는 사용자입니다');
+      throw new ForbiddenException('이미 존재하는 사용자입니다');
     }
     return await this.userRepository.save(userCreateDto);
   }
@@ -21,7 +21,7 @@ export class UserService {
   async login(userCreateDto: UserCreateDto) {
     const user = await this.userRepository.findWithOptions(userCreateDto);
     if (!user) {
-      throw new BadRequestException('존재하지 않는 사용자입니다');
+      throw new ForbiddenException('존재하지 않는 사용자입니다');
     }
     return {
       token: this.jwtService.sign({ id: user.id }),
