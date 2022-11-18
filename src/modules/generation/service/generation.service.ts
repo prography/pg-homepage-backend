@@ -30,7 +30,6 @@ export class GenerationService {
     const convertTime = moment(currentTime).format('YYYY-MM-DD');
     const currentDate: Date = new Date(convertTime);
     const currentGenerationState = { isActive: false, isApplying: false };
-    //this.checkDate();
     const currentGeneration = await this.generationRepository.findOneByDate(
       currentDate,
     );
@@ -74,15 +73,6 @@ export class GenerationService {
       return true;
     }
     return false;
-  }
-
-  private changeDay(targetDate: Date, count: number): Date {
-    const date = new Date(targetDate);
-    return new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate() + count,
-    );
   }
 
   async findOneGenerationById(id: number): Promise<GenerationGetResponseDto> {
