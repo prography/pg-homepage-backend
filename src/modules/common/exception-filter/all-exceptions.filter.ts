@@ -30,13 +30,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const responseBody: ErrorDto = {
       statusCode: httpStatus,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toLocaleString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       message: httpMessage,
     };
     Logger.log('error', exception);
-    console.log(exception);
-    //Logger 변경하기
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
 }
