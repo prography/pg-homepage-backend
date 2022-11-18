@@ -12,7 +12,6 @@ export class UserService {
 
   async userCreate(userCreateDto: UserCreateDto) {
     const user = await this.userRepository.findWithOptions(userCreateDto);
-    console.log(user);
     if (user) {
       throw new BadRequestException('이미 존재하는 사용자입니다');
     }
