@@ -26,10 +26,11 @@ export class GenerationService {
   }
 
   async findOneGenerationByCurrentDate(): Promise<GenerationGetCurrentResponseDto> {
-    const currentTime = new Date();
-    const convertTime = moment(currentTime).utc().format('YYYY-MM-DD');
+    const currentTime = new Date(new Date().toISOString());
+    const convertTime = moment(currentTime).format('YYYY-MM-DD');
     const currentDate: Date = new Date(convertTime);
     const currentGenerationState = { isActive: false, isApplying: false };
+    //this.checkDate();
     const currentGeneration = await this.generationRepository.findOneByDate(
       currentDate,
     );
@@ -59,9 +60,16 @@ export class GenerationService {
   }
 
   private isActive(currentDate: Date, startDate: Date, endDate: Date): boolean {
+    const currentMoment = moment(
+      `${currentDate.getFullYear()}-${
+        currentDate.getMonth() + 1
+      }-${currentDate.getDate()}`,
+    );
+    const startMoment = moment(startDate);
+    const endMoment = moment(endDate);
     if (
-      this.changeDay(startDate, -1) <= currentDate &&
-      currentDate <= this.changeDay(endDate, +1)
+      currentMoment.isSameOrAfter(startMoment) &&
+      currentMoment.isSameOrBefore(endMoment)
     ) {
       return true;
     }
