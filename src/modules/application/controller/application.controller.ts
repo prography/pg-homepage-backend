@@ -10,12 +10,12 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApplicationService } from './application.service';
-import { ApplicationCreateDto } from './dto/create-application.dto';
-import { ApplicationGetResponseDto } from './dto/response-application.dto';
+import { ApplicationCreateDto } from '../dto/create-application.dto';
+import { ApplicationGetResponseDto } from '../dto/response-application.dto';
 import {
   ApplicationPutAllDto,
   ApplicationPutDto,
-} from './dto/update-application.dto';
+} from '../dto/update-application.dto';
 
 @ApiTags('Application')
 @Controller('application')
