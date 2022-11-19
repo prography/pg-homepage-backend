@@ -3,7 +3,6 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Answers } from './Answers.entity';
@@ -19,15 +18,15 @@ export class Applications {
   @Column()
   status: string;
 
-  @OneToMany((type) => Answers, (answer) => answer.application)
+  @OneToMany(() => Answers, (answer) => answer.application)
   answers: Answers[];
 
-  @ManyToOne((type) => Users, (user) => user.applications)
+  @ManyToOne(() => Users, (user) => user.applications)
   user: Users;
 
-  @ManyToOne((type) => Generations, (generation) => generation.applications)
+  @ManyToOne(() => Generations, (generation) => generation.applications)
   generation: Generations;
 
-  @OneToOne((type) => Parts)
+  @ManyToOne(() => Parts, (part) => part.application)
   part: Parts;
 }

@@ -30,7 +30,7 @@ export class Users {
   email: string;
 
   @ApiHideProperty()
-  @OneToMany((type) => Applications, (application) => application.user)
+  @OneToMany(() => Applications, (application) => application.user)
   applications: Applications[];
 
   @RelationId((users: Users) => users.applications)

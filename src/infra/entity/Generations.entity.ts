@@ -24,15 +24,15 @@ export class Generations {
   @Column()
   name: string;
 
-  @OneToMany((type) => Portfolios, (portfolio) => portfolio.generation)
+  @OneToMany(() => Portfolios, (portfolio) => portfolio.generation)
   portfolios: Portfolios[];
 
-  @OneToMany((type) => Parts, (part) => part.generation)
+  @OneToMany(() => Parts, (part) => part.generation)
   parts: Parts[];
 
-  @OneToMany((type) => Questions, (question) => question.generation)
+  @OneToMany(() => Questions, (question) => question.generation)
   questions: Questions[];
 
-  @OneToMany((type) => Applications, (application) => application.generation)
+  @OneToMany(() => Applications, (application) => application.generation)
   applications: Applications[];
 }
