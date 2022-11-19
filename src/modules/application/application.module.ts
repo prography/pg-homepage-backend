@@ -1,14 +1,12 @@
+import { GenerationModule } from '@modules/generation/generation.module';
 import { Module } from '@nestjs/common';
+import { ApplicationBaseModule } from './application-base.module';
 import { ApplicationController } from './controller/application.controller';
-import { ApplicationRepository } from './repository/application.repository';
 import { ApplicationAdminService, ApplicationService } from './service';
 
 @Module({
+  imports: [GenerationModule, ApplicationBaseModule],
   controllers: [ApplicationController],
-  providers: [
-    ApplicationRepository,
-    ApplicationService,
-    ApplicationAdminService,
-  ],
+  providers: [ApplicationService, ApplicationAdminService],
 })
 export class ApplicationModule {}
