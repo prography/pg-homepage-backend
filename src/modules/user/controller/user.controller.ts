@@ -4,6 +4,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
@@ -29,15 +30,20 @@ import {
   UserChangedResultDto,
   UserPutDto,
 } from '../dto/put-user.dto';
+import { AdminType, UserAdminService } from '../service/user-admin.service';
 import { UserService, UserType } from '../service/user.service';
 
-type RequestWithToken = {
-  user: UserType;
+type tokenType = AdminType | UserType;
+type RequestWithToken = Request & {
+  user: tokenType;
 };
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly userAdminService: UserAdminService,
+  ) {}
 
   @ApiOperation({ summary: '사용자를 생성합니다' })
   @ApiForbiddenResponse({
@@ -79,7 +85,14 @@ export class UserController {
     @Param('userId', new ParseIntPipe()) userId: number,
     @Body() userPutDto: UserPutDto,
   ): Promise<UserChangedResultDto> {
-    return await this.userService.update(userPutDto, req.user, userId);
+    if (this.isAdmin(req.user)) {
+      return await this.userAdminService.update(userId, userPutDto);
+    }
+    return await this.userService.update(
+      userPutDto,
+      req.user as UserType,
+      userId,
+    );
   }
 
   @ApiOperation({
@@ -98,9 +111,19 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @Delete('/:userId')
   async deleteUser(
-    @Req() req: Request,
+    @Req() req: RequestWithToken,
     @Param('userId') userId: number,
   ): Promise<UserChangedResultDto> {
-    return await this.userService.delete(req.user, userId);
+    if (!this.isAdmin(req.user)) {
+      throw new ForbiddenException('권한이 없는 사용자 입니다');
+    }
+    return await this.userAdminService.delete(userId);
+  }
+
+  private isAdmin(tokenType: tokenType): boolean {
+    if ('isAdmin' in tokenType) {
+      return tokenType.isAdmin;
+    }
+    return false;
   }
 }
