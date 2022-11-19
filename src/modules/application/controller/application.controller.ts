@@ -9,18 +9,21 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ApplicationService } from './application.service';
 import { ApplicationCreateDto } from '../dto/create-application.dto';
 import { ApplicationGetResponseDto } from '../dto/response-application.dto';
 import {
   ApplicationPutAllDto,
   ApplicationPutDto,
 } from '../dto/update-application.dto';
+import { ApplicationAdminService, ApplicationService } from '../service';
 
 @ApiTags('Application')
 @Controller('application')
 export class ApplicationController {
-  constructor(private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly applicationAdminService: ApplicationAdminService,
+  ) {}
 
   @Post('/')
   async createApplication(
