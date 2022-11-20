@@ -1,7 +1,6 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
 import { Questions } from 'src/infra/entity/Questions.entity';
-import { SelectOptions } from 'src/infra/entity/SelectOptions.entity';
 
 export class CreateSelectOptionRequestDto {
   @IsString()
