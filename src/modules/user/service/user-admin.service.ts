@@ -2,9 +2,6 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserChangedResultDto, UserPutDto } from '../dto/put-user.dto';
 import { UserBaseService } from './user-base.service';
 
-export type AdminType = {
-  isAdmin: true;
-};
 @Injectable()
 export class UserAdminService {
   constructor(private readonly userBaseService: UserBaseService) {}
