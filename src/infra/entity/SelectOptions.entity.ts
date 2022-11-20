@@ -15,7 +15,7 @@ export class SelectOptions {
   @Column()
   questionId: number;
 
-  @ManyToOne((type) => Questions, (question) => question.selectOptions, {
+  @ManyToOne(() => Questions, (question) => question.selectOptions, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

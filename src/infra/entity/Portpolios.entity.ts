@@ -26,6 +26,6 @@ export class Portfolios {
   //JSON.stringify(string[]) 의 형태
   frameworks: string;
 
-  @ManyToOne((type) => Generations, (generation) => generation.portfolios)
+  @ManyToOne(() => Generations, (generation) => generation.portfolios)
   generation: Generations;
 }

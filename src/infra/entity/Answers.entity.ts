@@ -10,9 +10,9 @@ export class Answers {
   @Column()
   value: string;
 
-  @ManyToOne((type) => Applications, (application) => application.answers)
+  @ManyToOne(() => Applications, (application) => application.answers)
   application: Applications;
 
-  @ManyToOne((type) => Questions, (question) => question.answers)
+  @ManyToOne(() => Questions, (question) => question.answers)
   question: Questions;
 }

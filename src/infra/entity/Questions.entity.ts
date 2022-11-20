@@ -43,15 +43,15 @@ export class Questions {
   @Column()
   generationId: number;
 
-  @OneToMany((type) => SelectOptions, (selectOption) => selectOption.question)
+  @OneToMany(() => SelectOptions, (selectOption) => selectOption.question)
   selectOptions: SelectOptions[];
 
   @ApiHideProperty()
-  @OneToMany((type) => Answers, (answer) => answer.question)
+  @OneToMany(() => Answers, (answer) => answer.question)
   answers: Answers[];
 
   @ApiHideProperty()
-  @ManyToOne((type) => Generations, (generation) => generation.questions)
+  @ManyToOne(() => Generations, (generation) => generation.questions)
   generation: Generations[];
 
   @ApiHideProperty()

@@ -1,21 +1,18 @@
-import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
+import { Auth } from '@modules/auth/Auth';
+import { Role } from '@modules/auth/role/roles.enum';
+import { RolesType } from '@modules/auth/role/rolesType';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
-  Get,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Req,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -30,12 +27,14 @@ import {
   UserChangedResultDto,
   UserPutDto,
 } from '../dto/put-user.dto';
-import { AdminType, UserAdminService } from '../service/user-admin.service';
-import { UserService, UserType } from '../service/user.service';
+import { UserAdminService } from '../service/user-admin.service';
+import { UserService } from '../service/user.service';
 
-type tokenType = AdminType | UserType;
+export interface TokenType extends RolesType {
+  userId?: number;
+}
 type RequestWithToken = Request & {
-  user: tokenType;
+  user: TokenType;
 };
 @ApiTags('User')
 @Controller('user')
@@ -77,8 +76,7 @@ export class UserController {
     description: '존재하지 않거나 본인이 아닙니다',
     type: ErrorDto,
   })
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(Role.Admin, Role.User)
   @Put('/:userId')
   async putUser(
     @Req() req: RequestWithToken,
@@ -88,11 +86,7 @@ export class UserController {
     if (this.isAdmin(req.user)) {
       return await this.userAdminService.update(userId, userPutDto);
     }
-    return await this.userService.update(
-      userPutDto,
-      req.user as UserType,
-      userId,
-    );
+    return await this.userService.update(userPutDto, req.user, userId);
   }
 
   @ApiOperation({
@@ -107,23 +101,15 @@ export class UserController {
     description: '존재하지 않는 사용자입니다',
     type: ErrorDto,
   })
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(Role.Admin)
   @Delete('/:userId')
   async deleteUser(
-    @Req() req: RequestWithToken,
     @Param('userId') userId: number,
   ): Promise<UserChangedResultDto> {
-    if (!this.isAdmin(req.user)) {
-      throw new ForbiddenException('권한이 없는 사용자 입니다');
-    }
     return await this.userAdminService.delete(userId);
   }
 
-  private isAdmin(tokenType: tokenType): boolean {
-    if ('isAdmin' in tokenType) {
-      return tokenType.isAdmin;
-    }
-    return false;
+  private isAdmin(tokenType: TokenType): boolean {
+    return tokenType.roles.includes(Role.Admin);
   }
 }
