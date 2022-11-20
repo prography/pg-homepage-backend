@@ -1,5 +1,6 @@
 import { AwsRepository } from '@modules/aws/repository/aws.repository';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { GenerationRepository } from '@modules/generation/repository/generation.repository';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   PortfolioGetResponseDto,
   PortfolioPutResponseDto,
@@ -22,6 +23,7 @@ export const objectName = `portfolio_images`;
 export class PortfolioService {
   constructor(
     private portfolioRepository: PortfolioRepository,
+    private generationRepository: GenerationRepository,
     private awsRepository: AwsRepository,
   ) {}
 
@@ -44,19 +46,22 @@ export class PortfolioService {
     }: PortfolioServiceDto,
     files: Array<Express.Multer.File>,
   ): Promise<PortfolioGetResponseDto> {
+    const generationResult = await this.generationRepository.findOneById(
+      generationId,
+    );
+    if (!generationResult) {
+      throw new BadRequestException('없는 기수입니다.');
+    }
     const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
     const createResult = await this.portfolioRepository.create({
       imageUrl: JSON.stringify(imageUrls),
-      generationId,
+      generation: generationResult,
       projectName,
       projectDescription,
       teamName,
       teamMembers,
       frameworks,
     });
-    if (!createResult) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
-    }
     return {
       ...createResult,
       generation: {
@@ -78,23 +83,22 @@ export class PortfolioService {
     }: PortfolioServiceDto,
     files: Array<Express.Multer.File>,
   ): Promise<PortfolioPutResponseDto> {
-    const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
-    const createResult = await this.portfolioRepository.updateOneById(
-      portfolioId,
-      {
-        imageUrl: JSON.stringify(imageUrls),
-        generationId,
-        projectName,
-        projectDescription,
-        teamName,
-        teamMembers,
-        frameworks,
-      },
+    const generationResult = await this.generationRepository.findOneById(
+      generationId,
     );
-    if (!createResult) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
+    if (!generationResult) {
+      throw new BadRequestException('없는 기수입니다.');
     }
-    return createResult;
+    const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
+    return await this.portfolioRepository.updateOneById(portfolioId, {
+      imageUrl: JSON.stringify(imageUrls),
+      generation: generationResult,
+      projectName,
+      projectDescription,
+      teamName,
+      teamMembers,
+      frameworks,
+    });
   }
 
   async deletePortfoiloById(portfolioId: number) {
