@@ -1,5 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Questions } from 'src/infra/entity/Questions.entity';
+import { Connection, DataSource } from 'typeorm';
 import {
   CreateQuestionRequestDto,
   CreateSelectOptionRequestDto,
@@ -15,6 +21,7 @@ export class QuestionService {
     private readonly questionRepository: QuestionRepository,
     private readonly partQuestionRepository: PartQuestionRepository,
     private readonly selectOptionsRepository: SelectOptionsRepository,
+    private dataSource: DataSource,
   ) {}
 
   async getQuestions(partIds: number[]): Promise<Questions[]> {
@@ -26,24 +33,43 @@ export class QuestionService {
     selectOptions,
     ...data
   }: CreateQuestionRequestDto): Promise<Questions> {
-    const question = await this.questionRepository.save(data);
-    await Promise.all(
-      selectOptions.map(async (selectOption) => {
-        await this.selectOptionsRepository.save({
-          ...selectOption,
-          questionId: question.id,
-        });
-      }),
-    );
-    await Promise.all(
-      partIds.map(async (partId) => {
-        await this.partQuestionRepository.save({
-          partId,
-          questionId: question.id,
-        });
-      }),
-    );
-    return this.getQuestion(question.id);
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    //Todo: 리팩토링!!!!!!!
+    try {
+      const question = await this.questionRepository.save(data);
+
+      if (data.type == '객관식') {
+        if (selectOptions.length == 0) {
+          throw new BadRequestException('빈 데이터');
+        }
+        await Promise.all(
+          selectOptions.map(async (selectOption) => {
+            await this.selectOptionsRepository.save({
+              ...selectOption,
+              questionId: question.id,
+            });
+          }),
+        );
+      }
+
+      await Promise.all(
+        partIds.map(async (partId) => {
+          await this.partQuestionRepository.save({
+            partId,
+            questionId: question.id,
+          });
+        }),
+      );
+
+      return await this.getQuestion(question.id);
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new HttpException(err.message, err.status);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   private async getQuestion(id: number) {
