@@ -1,6 +1,6 @@
 import { AwsRepository } from '@modules/aws/repository/aws.repository';
 import { GenerationRepository } from '@modules/generation/repository/generation.repository';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import {
   PortfolioGetResponseDto,
   PortfolioPutResponseDto,
@@ -50,7 +50,7 @@ export class PortfolioService {
       generationId,
     );
     if (!generationResult) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('없는 기수입니다.');
     }
     const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
     const createResult = await this.portfolioRepository.create({
@@ -87,7 +87,7 @@ export class PortfolioService {
       generationId,
     );
     if (!generationResult) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('없는 기수입니다.');
     }
     const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
     return await this.portfolioRepository.updateOneById(portfolioId, {
