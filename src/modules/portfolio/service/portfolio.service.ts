@@ -1,4 +1,5 @@
 import { AwsRepository } from '@modules/aws/repository/aws.repository';
+import { GenerationRepository } from '@modules/generation/repository/generation.repository';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   PortfolioGetResponseDto,
@@ -22,6 +23,7 @@ export const objectName = `portfolio_images`;
 export class PortfolioService {
   constructor(
     private portfolioRepository: PortfolioRepository,
+    private generationRepository: GenerationRepository,
     private awsRepository: AwsRepository,
   ) {}
 
@@ -44,19 +46,22 @@ export class PortfolioService {
     }: PortfolioServiceDto,
     files: Array<Express.Multer.File>,
   ): Promise<PortfolioGetResponseDto> {
+    const generationResult = await this.generationRepository.findOneById(
+      generationId,
+    );
+    if (!generationResult) {
+      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
+    }
     const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
     const createResult = await this.portfolioRepository.create({
       imageUrl: JSON.stringify(imageUrls),
-      generationId,
+      generation: generationResult,
       projectName,
       projectDescription,
       teamName,
       teamMembers,
       frameworks,
     });
-    if (!createResult) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
-    }
     return {
       ...createResult,
       generation: {
@@ -78,12 +83,18 @@ export class PortfolioService {
     }: PortfolioServiceDto,
     files: Array<Express.Multer.File>,
   ): Promise<PortfolioPutResponseDto> {
+    const generationResult = await this.generationRepository.findOneById(
+      generationId,
+    );
+    if (!generationResult) {
+      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
+    }
     const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
     const createResult = await this.portfolioRepository.updateOneById(
       portfolioId,
       {
         imageUrl: JSON.stringify(imageUrls),
-        generationId,
+        generation: generationResult,
         projectName,
         projectDescription,
         teamName,
@@ -91,9 +102,6 @@ export class PortfolioService {
         frameworks,
       },
     );
-    if (!createResult) {
-      throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
-    }
     return createResult;
   }
 
