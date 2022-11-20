@@ -1,4 +1,5 @@
 import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
+import { Role } from '@modules/auth/role/roles.enum';
 import { RolesType } from '@modules/auth/role/rolesType';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
@@ -119,6 +120,6 @@ export class UserController {
   }
 
   private isAdmin(tokenType: TokenType): boolean {
-    return tokenType.roles.includes('admin');
+    return tokenType.roles.includes(Role.Admin);
   }
 }
