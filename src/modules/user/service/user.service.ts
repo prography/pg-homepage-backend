@@ -1,7 +1,7 @@
 import { Role } from '@modules/auth/role/roles.enum';
+import { TokenType } from '@modules/auth/role/rolesType';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { TokenType } from '../controller/user.controller';
 import { UserCreateDto } from '../dto/create-user.dto';
 import { UserPutDto } from '../dto/put-user.dto';
 import { UserBaseService } from './user-base.service';
