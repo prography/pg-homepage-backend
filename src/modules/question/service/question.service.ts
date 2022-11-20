@@ -62,7 +62,7 @@ export class QuestionService {
           });
         }),
       );
-
+      await queryRunner.commitTransaction();
       return await this.getQuestion(question.id);
     } catch (err) {
       await queryRunner.rollbackTransaction();
