@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Users } from 'src/infra/entity/Users.entity';
 import { UpdateResult } from 'typeorm';
 import { UserCreateDto } from '../dto/create-user.dto';
@@ -37,5 +37,13 @@ export class UserBaseService {
 
   async save(userCreateDto: UserCreateDto) {
     return await this.userRepository.save(userCreateDto);
+  }
+
+  async findOrThrows(userId: number): Promise<Users> {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new NotFoundException('없는 사용자 입니다');
+    }
+    return user;
   }
 }

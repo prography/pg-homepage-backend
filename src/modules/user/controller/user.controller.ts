@@ -1,6 +1,6 @@
 import { Auth } from '@modules/auth/Auth';
 import { Role } from '@modules/auth/role/roles.enum';
-import { RolesType } from '@modules/auth/role/rolesType';
+import { RequestWithToken, TokenType } from '@modules/auth/role/rolesType';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
@@ -19,7 +19,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Request } from 'express';
 import { Users } from 'src/infra/entity/Users.entity';
 import { UserCreateDto } from '../dto/create-user.dto';
 import {
@@ -30,12 +29,6 @@ import {
 import { UserAdminService } from '../service/user-admin.service';
 import { UserService } from '../service/user.service';
 
-export interface TokenType extends RolesType {
-  userId?: number;
-}
-type RequestWithToken = Request & {
-  user: TokenType;
-};
 @ApiTags('User')
 @Controller('user')
 export class UserController {

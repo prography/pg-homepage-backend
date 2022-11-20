@@ -59,7 +59,6 @@ export class GenerationService {
   }
 
   private isActive(currentDate: Date, startDate: Date, endDate: Date): boolean {
-    console.log(currentDate);
     const currentMoment = moment(
       `${currentDate.getFullYear()}-${
         currentDate.getMonth() + 1
