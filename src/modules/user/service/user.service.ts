@@ -1,12 +1,11 @@
+import { Role } from '@modules/auth/role/roles.enum';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { TokenType } from '../controller/user.controller';
 import { UserCreateDto } from '../dto/create-user.dto';
 import { UserPutDto } from '../dto/put-user.dto';
 import { UserBaseService } from './user-base.service';
 
-export type UserType = {
-  userId: number;
-};
 @Injectable()
 export class UserService {
   constructor(
@@ -28,12 +27,12 @@ export class UserService {
       throw new ForbiddenException('존재하지 않는 사용자입니다');
     }
     return {
-      token: this.jwtService.sign({ userId: user.id }),
+      token: this.jwtService.sign({ roles: [Role.User], userId: user.id }),
       user,
     };
   }
 
-  async update(userUpdateDto: UserPutDto, userType: UserType, id: number) {
+  async update(userUpdateDto: UserPutDto, userType: TokenType, id: number) {
     this.validateId(userType, id);
     if (!(await this.checkExistUser(id))) {
       throw new ForbiddenException('사용자가 잘못된 데이터에 접근했습니다');
@@ -42,8 +41,8 @@ export class UserService {
     return { affected: updateResult.affected };
   }
 
-  private validateId(userType: UserType, id: number): void {
-    if (userType.userId != id) {
+  private validateId(userType: TokenType, id: number): void {
+    if (userType?.userId != id) {
       throw new ForbiddenException('사용자가 잘못된 데이터에 접근했습니다');
     }
   }

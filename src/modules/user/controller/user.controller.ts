@@ -1,11 +1,11 @@
 import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
+import { RolesType } from '@modules/auth/role/rolesType';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
   Controller,
   Delete,
   ForbiddenException,
-  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -30,12 +30,14 @@ import {
   UserChangedResultDto,
   UserPutDto,
 } from '../dto/put-user.dto';
-import { AdminType, UserAdminService } from '../service/user-admin.service';
-import { UserService, UserType } from '../service/user.service';
+import { UserAdminService } from '../service/user-admin.service';
+import { UserService } from '../service/user.service';
 
-type tokenType = AdminType | UserType;
+export interface TokenType extends RolesType {
+  userId?: number;
+}
 type RequestWithToken = Request & {
-  user: tokenType;
+  user: TokenType;
 };
 @ApiTags('User')
 @Controller('user')
@@ -88,11 +90,7 @@ export class UserController {
     if (this.isAdmin(req.user)) {
       return await this.userAdminService.update(userId, userPutDto);
     }
-    return await this.userService.update(
-      userPutDto,
-      req.user as UserType,
-      userId,
-    );
+    return await this.userService.update(userPutDto, req.user, userId);
   }
 
   @ApiOperation({
@@ -120,10 +118,7 @@ export class UserController {
     return await this.userAdminService.delete(userId);
   }
 
-  private isAdmin(tokenType: tokenType): boolean {
-    if ('isAdmin' in tokenType) {
-      return tokenType.isAdmin;
-    }
-    return false;
+  private isAdmin(tokenType: TokenType): boolean {
+    return tokenType.roles.includes('admin');
   }
 }
