@@ -1,3 +1,5 @@
+import { Auth } from '@modules/auth/Auth';
+import { Role } from '@modules/auth/role/roles.enum';
 import {
   Get,
   Controller,
@@ -24,6 +26,7 @@ export class PartController {
   }
 
   @ApiOperation({ summary: '파트 등록' })
+  @Auth(Role.Admin)
   @Post()
   createPart(@Body() body: CreatePartRequestDto) {
     return this.partService.createPart(body);
@@ -36,12 +39,14 @@ export class PartController {
   }
 
   @ApiOperation({ summary: '파트 수정' })
+  @Auth(Role.Admin)
   @Patch(':id')
   updatePart(@Param('id') id: number, @Body() body: UpdatePartRequestDto) {
     return this.partService.updatePart(id, body);
   }
 
   @ApiOperation({ summary: '파트 삭제' })
+  @Auth(Role.Admin)
   @Delete(':id')
   deletePart(@Param('id') id: number) {
     return this.partService.deletePart(id);

@@ -1,20 +1,18 @@
-import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
+import { Auth } from '@modules/auth/Auth';
+import { Role } from '@modules/auth/role/roles.enum';
+import { RolesType } from '@modules/auth/role/rolesType';
 import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
   Controller,
   Delete,
-  Get,
   Param,
   ParseIntPipe,
   Post,
   Put,
   Req,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiBearerAuth,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
@@ -29,15 +27,22 @@ import {
   UserChangedResultDto,
   UserPutDto,
 } from '../dto/put-user.dto';
-import { UserService, UserType } from '../service/user.service';
+import { UserAdminService } from '../service/user-admin.service';
+import { UserService } from '../service/user.service';
 
-type RequestWithToken = {
-  user: UserType;
+export interface TokenType extends RolesType {
+  userId?: number;
+}
+type RequestWithToken = Request & {
+  user: TokenType;
 };
 @ApiTags('User')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly userAdminService: UserAdminService,
+  ) {}
 
   @ApiOperation({ summary: '사용자를 생성합니다' })
   @ApiForbiddenResponse({
@@ -71,14 +76,16 @@ export class UserController {
     description: '존재하지 않거나 본인이 아닙니다',
     type: ErrorDto,
   })
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(Role.Admin, Role.User)
   @Put('/:userId')
   async putUser(
     @Req() req: RequestWithToken,
     @Param('userId', new ParseIntPipe()) userId: number,
     @Body() userPutDto: UserPutDto,
   ): Promise<UserChangedResultDto> {
+    if (this.isAdmin(req.user)) {
+      return await this.userAdminService.update(userId, userPutDto);
+    }
     return await this.userService.update(userPutDto, req.user, userId);
   }
 
@@ -94,13 +101,15 @@ export class UserController {
     description: '존재하지 않는 사용자입니다',
     type: ErrorDto,
   })
-  @ApiBearerAuth('access-token')
-  @UseGuards(AuthGuard('jwt'))
+  @Auth(Role.Admin)
   @Delete('/:userId')
   async deleteUser(
-    @Req() req: Request,
     @Param('userId') userId: number,
   ): Promise<UserChangedResultDto> {
-    return await this.userService.delete(req.user, userId);
+    return await this.userAdminService.delete(userId);
+  }
+
+  private isAdmin(tokenType: TokenType): boolean {
+    return tokenType.roles.includes(Role.Admin);
   }
 }

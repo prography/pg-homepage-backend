@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { UserController } from './controller/user.controller';
-import { UserRepository } from './repository/user.repository';
-import { UserService } from './service/user.service';
+import { UserAdminService, UserService } from './service';
+import { UserBaseModule } from './user-base.module';
 
 @Module({
   imports: [
+    UserBaseModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
@@ -18,6 +19,7 @@ import { UserService } from './service/user.service';
     }),
   ],
   controllers: [UserController],
-  providers: [UserService, UserRepository],
+  providers: [UserService, UserAdminService],
+  exports: [],
 })
 export class UserModule {}

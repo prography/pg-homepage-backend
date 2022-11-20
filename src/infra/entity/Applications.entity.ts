@@ -1,10 +1,11 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import {
   Column,
   Entity,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
+  RelationId,
 } from 'typeorm';
 import { Answers } from './Answers.entity';
 import { Generations } from './Generations.entity';
@@ -16,18 +17,25 @@ export class Applications {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'bool' })
+  finished: boolean;
+
   @Column()
   status: string;
 
-  @OneToMany((type) => Answers, (answer) => answer.application)
+  @OneToMany(() => Answers, (answer) => answer.application)
   answers: Answers[];
 
-  @ManyToOne((type) => Users, (user) => user.applications)
+  @ManyToOne(() => Users, (user) => user.applications)
   user: Users;
 
-  @ManyToOne((type) => Generations, (generation) => generation.applications)
+  @ApiHideProperty()
+  @ManyToOne(() => Generations, (generation) => generation.applications)
   generation: Generations;
 
-  @OneToOne((type) => Parts)
+  @RelationId((applications: Applications) => applications.generation)
+  generationId: number;
+
+  @ManyToOne(() => Parts, (part) => part.application)
   part: Parts;
 }
