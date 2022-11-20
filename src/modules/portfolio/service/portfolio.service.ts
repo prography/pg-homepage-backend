@@ -90,19 +90,15 @@ export class PortfolioService {
       throw new HttpException('없는 기수입니다.', HttpStatus.BAD_REQUEST);
     }
     const imageUrls: string[] = await this.uploadPortfolioImageFileAll(files);
-    const createResult = await this.portfolioRepository.updateOneById(
-      portfolioId,
-      {
-        imageUrl: JSON.stringify(imageUrls),
-        generation: generationResult,
-        projectName,
-        projectDescription,
-        teamName,
-        teamMembers,
-        frameworks,
-      },
-    );
-    return createResult;
+    return await this.portfolioRepository.updateOneById(portfolioId, {
+      imageUrl: JSON.stringify(imageUrls),
+      generation: generationResult,
+      projectName,
+      projectDescription,
+      teamName,
+      teamMembers,
+      frameworks,
+    });
   }
 
   async deletePortfoiloById(portfolioId: number) {
