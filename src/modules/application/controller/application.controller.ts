@@ -1,3 +1,6 @@
+import { Auth } from '@modules/auth/Auth';
+import { Role } from '@modules/auth/role/roles.enum';
+import { RequestWithToken } from '@modules/auth/role/rolesType';
 import {
   Body,
   Controller,
@@ -7,8 +10,10 @@ import {
   Post,
   Put,
   Query,
+  Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Applications } from 'src/infra/entity/Applications.entity';
 import { ApplicationCreateDto } from '../dto/create-application.dto';
 import { ApplicationGetResponseDto } from '../dto/response-application.dto';
 import {
@@ -25,17 +30,22 @@ export class ApplicationController {
     private readonly applicationAdminService: ApplicationAdminService,
   ) {}
 
+  @Auth(Role.User)
   @Post('/')
   async createApplication(
+    @Req() { user }: RequestWithToken,
     @Body() applicationCreateDto: ApplicationCreateDto,
-  ): Promise<ApplicationGetResponseDto> {
-    return null;
+  ): Promise<Applications> {
+    return await this.applicationService.createFinalApplication(
+      user,
+      applicationCreateDto,
+    );
   }
 
   @Get('/:applicationId')
   async getApplication(
     @Param('applicationId') id: string,
-  ): Promise<ApplicationGetResponseDto> {
+  ): Promise<Applications> {
     return null;
   }
 
@@ -43,7 +53,7 @@ export class ApplicationController {
   async getApplicationWithFiltered(
     @Query('part') part: string,
     @Query('status') status: string,
-  ): Promise<ApplicationGetResponseDto[]> {
+  ): Promise<Applications[]> {
     return null;
   }
 
