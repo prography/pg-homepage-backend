@@ -1,3 +1,5 @@
+import { Auth } from '@modules/auth/Auth';
+import { Role } from '@modules/auth/role/roles.enum';
 import {
   Get,
   Controller,
@@ -26,12 +28,14 @@ export class QuestionController {
   }
 
   @ApiOperation({ summary: '질문 등록' })
+  @Auth(Role.Admin)
   @Post()
   createQuestion(@Body() body: CreateQuestionRequestDto) {
     return this.questionService.createQuestion(body);
   }
 
   @ApiOperation({ summary: '질문 수정' })
+  @Auth(Role.Admin)
   @Put(':id')
   updateQuestion(
     @Param('id') id: number,
@@ -41,6 +45,7 @@ export class QuestionController {
   }
 
   @ApiOperation({ summary: '질문 삭제' })
+  @Auth(Role.Admin)
   @Delete(':id')
   deleteQuestion(@Param('id') id: number) {
     return this.questionService.deleteQuestion(id);
