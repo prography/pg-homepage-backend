@@ -20,7 +20,6 @@ export class PartController {
   constructor(private readonly partService: PartService) {}
 
   @ApiOperation({ summary: '전체 파트 조회' })
-  @Auth(Role.Admin)
   @Get()
   getParts() {
     return this.partService.getParts();
@@ -34,7 +33,6 @@ export class PartController {
   }
 
   @ApiOperation({ summary: '파트 조회' })
-  @Auth(Role.Admin)
   @Get(':id')
   getPart(@Param('id') id: number) {
     return this.partService.getPart(id);
