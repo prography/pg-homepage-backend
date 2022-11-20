@@ -17,6 +17,9 @@ export class Applications {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'bool' })
+  finished: boolean;
+
   @Column()
   status: string;
 
