@@ -1,4 +1,5 @@
-import { JwtAuthGuard } from '@modules/auth/jwt/guard/jwt.guard';
+import { Auth } from '@modules/auth/Auth';
+import { Role } from '@modules/auth/role/roles.enum';
 import {
   Body,
   Controller,
@@ -9,14 +10,8 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GenerationCreateDto } from '../dto/create-generation.dto';
 import {
   GenerationDeleteResponseDto,
@@ -68,16 +63,14 @@ export class GenerationController {
   }
 
   @Post()
-  @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
+  @Auth(Role.Admin)
   @ApiOperation({ summary: '기수 등록' })
   async generationCreate(@Body() createGenerationDto: GenerationCreateDto) {
     return await this.generationService.saveGeneration(createGenerationDto);
   }
 
   @Put(':id')
-  @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
+  @Auth(Role.Admin)
   @ApiOperation({ summary: '특정 기수 수정' })
   @ApiOkResponse({
     description: 'affected는 변경된 row의 갯수',
@@ -98,8 +91,7 @@ export class GenerationController {
   }
 
   @Delete(':id')
-  @ApiBearerAuth('access-token')
-  @UseGuards(JwtAuthGuard)
+  @Auth(Role.Admin)
   @ApiOperation({ summary: '특정 기수 제거' })
   @ApiOkResponse({
     description: 'affected는 변경된 row의 갯수',

@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResponseDto } from '../dto/login.dto';
+import { Role } from '../role/roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
       throw new BadRequestException('로그인 실패');
     }
     return {
-      token: this.jwtService.sign({ isAdmin: true }),
+      token: this.jwtService.sign({ roles: [Role.Admin] }),
     };
   }
 }
