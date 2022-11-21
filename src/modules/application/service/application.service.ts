@@ -1,4 +1,5 @@
 import { TokenType } from '@modules/auth/role/rolesType';
+import { CommonService } from '@modules/common/common.service';
 import { GenerationGetCurrentResponseDto } from '@modules/generation/dto/reponse-generation.dto';
 import { GenerationService } from '@modules/generation/service/generation.service';
 import { PartBaseService } from '@modules/part/service/part-base.service';
@@ -26,6 +27,7 @@ export class ApplicationService {
     private readonly applicationBaseService: ApplicationBaseService,
     private readonly partBaseService: PartBaseService,
     private readonly dataSource: DataSource,
+    private readonly commonService: CommonService,
   ) {}
 
   async createFinalApplication(
@@ -77,7 +79,7 @@ export class ApplicationService {
       user: Users,
     ) => Promise<Applications>,
   ): Promise<any> {
-    return await this.saveTransaction<Applications>(async () => {
+    return await this.commonService.transaction<Applications>(async () => {
       const questions = part.partsQuestions.map(
         (partQuestion) => partQuestion.question,
       );
@@ -98,23 +100,6 @@ export class ApplicationService {
       await this.applicationBaseService.saveAnswers(answers);
       return application;
     });
-  }
-
-  private async saveTransaction<T>(executable: () => Promise<T>): Promise<T> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const result = executable();
-      await queryRunner.commitTransaction();
-      return result;
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException(err.message);
-    } finally {
-      await queryRunner.release();
-    }
   }
 
   private createMinimumApplication(
