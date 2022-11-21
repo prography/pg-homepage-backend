@@ -22,4 +22,14 @@ export class ApplicationBaseService {
   async save(application: Applications) {
     return await this.applicationRepository.save(application);
   }
+
+  async update(application: Applications) {
+    return await this.applicationRepository.update(application.id, application);
+  }
+
+  async findById(applicationId: number): Promise<Applications> {
+    return await this.applicationRepository.findOne({
+      where: { id: applicationId },
+    });
+  }
 }
