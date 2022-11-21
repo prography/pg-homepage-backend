@@ -47,7 +47,4 @@ export class Applications {
 
   @ManyToOne(() => Parts, (part) => part.application)
   part: Parts;
-
-  @RelationId((application: Applications) => application.answers)
-  answerIds: number[];
 }
