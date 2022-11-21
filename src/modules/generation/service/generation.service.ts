@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as moment from 'moment';
+import { Generations } from 'src/infra/entity/Generations.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import {
   GenerationDeleteResponseDto,
@@ -25,7 +26,9 @@ export class GenerationService {
     return await this.generationRepository.findAll();
   }
 
-  async findOneGenerationByCurrentDate(): Promise<GenerationGetCurrentResponseDto> {
+  async findOneGenerationByCurrentDate(): Promise<
+    Generations & { isActive: boolean; isApplying: boolean }
+  > {
     const currentTime = new Date(new Date().toLocaleDateString());
     const convertTime = moment(currentTime).format('YYYY-MM-DD');
     const currentDate: Date = new Date(convertTime);
@@ -59,7 +62,6 @@ export class GenerationService {
   }
 
   private isActive(currentDate: Date, startDate: Date, endDate: Date): boolean {
-    console.log(currentDate);
     const currentMoment = moment(
       `${currentDate.getFullYear()}-${
         currentDate.getMonth() + 1

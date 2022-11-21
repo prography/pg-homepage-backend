@@ -1,7 +1,6 @@
 import { ApiMultiFile } from '@core/swagger/swagger.type';
 import { Auth } from '@modules/auth/Auth';
 import { Role } from '@modules/auth/role/roles.enum';
-import { ErrorDto } from '@modules/common/dto/error.dto';
 import {
   Body,
   Controller,
@@ -15,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
-  ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConsumes,
   ApiOkResponse,
   ApiOperation,
@@ -51,10 +50,6 @@ export class PortfolioController {
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
   @UseInterceptors(FilesInterceptor('files'))
-  @ApiBadRequestResponse({
-    description: '없는 기수입니다.',
-    type: ErrorDto,
-  })
   async portfolioCreate(
     @Body() portfolioCreateDto: PortfolioCreateDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
@@ -68,10 +63,6 @@ export class PortfolioController {
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
   @UseInterceptors(FilesInterceptor('files'))
-  @ApiBadRequestResponse({
-    description: '없는 기수입니다.',
-    type: ErrorDto,
-  })
   async portfolioUpdate(
     @Param('portfolioid') id: number,
     @Body() portfolioPutDto: PortfolioPutDto,

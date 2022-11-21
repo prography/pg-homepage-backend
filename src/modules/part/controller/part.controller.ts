@@ -9,7 +9,7 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreatePartRequestDto } from '../dto/create-part.dto';
 import { UpdatePartRequestDto } from '../dto/update-part.dto';
 import { PartService } from '../service/part.service';
@@ -19,6 +19,11 @@ import { PartService } from '../service/part.service';
 export class PartController {
   constructor(private readonly partService: PartService) {}
 
+  @ApiQuery({
+    name: 'generationId',
+    required: false,
+    description: '검색을 원하는 기수 id',
+  })
   @ApiOperation({ summary: '전체 파트 조회' })
   @Get()
   getParts() {
