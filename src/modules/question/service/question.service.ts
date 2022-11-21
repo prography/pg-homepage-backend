@@ -1,3 +1,4 @@
+import { CommonService } from '@modules/common/common.service';
 import {
   BadRequestException,
   HttpException,
@@ -21,7 +22,7 @@ export class QuestionService {
     private readonly questionRepository: QuestionRepository,
     private readonly partQuestionRepository: PartQuestionRepository,
     private readonly selectOptionsRepository: SelectOptionsRepository,
-    private dataSource: DataSource,
+    private readonly commonService: CommonService,
   ) {}
 
   async getQuestions(partIds: number[]): Promise<Questions[]> {
@@ -33,11 +34,8 @@ export class QuestionService {
     selectOptions,
     ...data
   }: CreateQuestionRequestDto): Promise<Questions> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     //Todo: 리팩토링!!!!!!!
-    try {
+    return await this.commonService.transaction(async () => {
       const question = await this.questionRepository.save(data);
 
       if (data.type == '객관식') {
@@ -62,14 +60,8 @@ export class QuestionService {
           });
         }),
       );
-      await queryRunner.commitTransaction();
       return await this.getQuestion(question.id);
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      throw new HttpException(err.message, err.status);
-    } finally {
-      await queryRunner.release();
-    }
+    });
   }
 
   private async getQuestion(id: number) {
