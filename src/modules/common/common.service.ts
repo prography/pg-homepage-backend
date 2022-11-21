@@ -1,3 +1,4 @@
+import { TokenType } from '@modules/auth/role/rolesType';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
@@ -27,5 +28,12 @@ export class CommonService {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  isAdmin(userToken: TokenType): boolean {
+    if (userToken.roles.includes('admin')) {
+      return true;
+    }
+    return false;
   }
 }
