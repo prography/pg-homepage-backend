@@ -145,7 +145,6 @@ export class ApplicationService {
   ): Promise<ApplicationUpdateDto> {
     const application = this.createMinimumApplication(generation, part, user);
     application.status = Status.UnEnrolled;
-    console.log(user);
     const alreadyExistApplication = user.applications.filter(
       (application) => application.status == Status.UnEnrolled,
     )[0];
