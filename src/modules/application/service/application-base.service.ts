@@ -30,6 +30,17 @@ export class ApplicationBaseService {
   async findById(applicationId: number): Promise<Applications> {
     return await this.applicationRepository.findOne({
       where: { id: applicationId },
+      relations: {
+        answers: true,
+      },
     });
+  }
+
+  async deleteById(applicationId: number): Promise<{ affected?: number }> {
+    return await this.applicationRepository.delete(applicationId);
+  }
+
+  async updateAll(applicationId: number, application: Partial<Applications>) {
+    return await this.applicationRepository.update(applicationId, application);
   }
 }

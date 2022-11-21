@@ -6,6 +6,7 @@ import { PartBaseService } from '@modules/part/service/part-base.service';
 import { UserBaseService } from '@modules/user/service/user-base.service';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -152,5 +153,15 @@ export class ApplicationService {
       application.id = alreadyExistApplication.id;
     }
     return await this.applicationBaseService.update(application);
+  }
+
+  async findOneApplication(userToken: TokenType, applicationId: number) {
+    const application = await this.applicationBaseService.findById(
+      applicationId,
+    );
+    if (application.user.id != userToken.userId) {
+      throw new ForbiddenException('권한이 없습니다');
+    }
+    return application;
   }
 }
