@@ -18,6 +18,7 @@ import { ApplicationCreateDto } from '../dto/create-application.dto';
 import {
   ApplicationPutAllDto,
   ApplicationPutDto,
+  ApplicationUpdateDto,
 } from '../dto/update-application.dto';
 import { ApplicationAdminService, ApplicationService } from '../service';
 
@@ -95,7 +96,7 @@ export class ApplicationController {
   async createDraft(
     @Req() { user }: RequestWithToken,
     @Body() applicationCreateDto: ApplicationCreateDto,
-  ): Promise<Applications> {
+  ): Promise<ApplicationUpdateDto> {
     return await this.applicationService.createDraftApplication(
       user,
       applicationCreateDto,
