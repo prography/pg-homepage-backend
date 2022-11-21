@@ -6,6 +6,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -100,6 +101,22 @@ export class UserController {
     @Param('userId') userId: number,
   ): Promise<UserChangedResultDto> {
     return await this.userAdminService.delete(userId);
+  }
+
+  @ApiOperation({
+    summary: '사용자의 데이터를 조회합니다',
+    description: '로그인 되어있는 user의 정보를 조회합니다',
+  })
+  @Auth(Role.Admin, Role.User)
+  @Get('/:userId')
+  async findUser(
+    @Req() { user }: RequestWithToken,
+    @Param('userId', new ParseIntPipe()) userId: number,
+  ) {
+    if (this.isAdmin(user)) {
+      return await this.userAdminService.findUser(userId);
+    }
+    return await this.userService.findUser(user, userId);
   }
 
   private isAdmin(tokenType: TokenType): boolean {
