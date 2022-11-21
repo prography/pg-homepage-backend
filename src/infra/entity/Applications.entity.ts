@@ -1,4 +1,5 @@
-import { ApiHideProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { IsEnum } from 'class-validator';
 import {
   Column,
   Entity,
@@ -12,16 +13,24 @@ import { Generations } from './Generations.entity';
 import { Parts } from './Parts.entity';
 import { Users } from './Users.entity';
 
+export const Status = {
+  UnEnrolled: 'unenrolled',
+  Failed: 'failed',
+  Enrolled: 'enrolled',
+  DocsQualified: 'docs-qualified',
+  AssignmentQualified: 'assignment-qualified',
+  FinalQualified: 'final-qualified',
+} as const;
+export type Status = typeof Status[keyof typeof Status];
 @Entity()
 export class Applications {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'bool' })
-  finished: boolean;
-
+  @IsEnum(Status)
+  @ApiProperty({ enum: Object.keys(Status) })
   @Column()
-  status: string;
+  status: Status;
 
   @OneToMany(() => Answers, (answer) => answer.application)
   answers: Answers[];
