@@ -15,6 +15,7 @@ import { Parts } from 'src/infra/entity/Parts.entity';
 import { Users } from 'src/infra/entity/Users.entity';
 import { DataSource } from 'typeorm';
 import { ApplicationCreateDto } from '../dto/create-application.dto';
+import { ApplicationUpdateDto } from '../dto/update-application.dto';
 import { ApplicationBaseService } from './application-base.service';
 
 @Injectable()
@@ -32,7 +33,7 @@ export class ApplicationService {
     applicationCreateDto: ApplicationCreateDto,
   ): Promise<Applications> {
     const [user, generation, part] = await Promise.all([
-      this.userBaseService.findOrThrows(userToken.userId),
+      this.userBaseService.findUserAndApplicationsOrThrow(userToken.userId),
       this.generationService.findOneGenerationByCurrentDate(),
       this.partBaseService.fromPartIdToSelectOptionsOrThrow(
         applicationCreateDto.partId,
