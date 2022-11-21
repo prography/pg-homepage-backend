@@ -21,7 +21,6 @@ export class ApplicationBaseService {
   ): Promise<Applications> {
     const application = this.createMinimumApplication(generation, part, user);
     application.status = Status.Enrolled;
-    application.finished = true;
     return await this.applicationRepository.save(application);
   }
 
@@ -40,7 +39,6 @@ export class ApplicationBaseService {
   ): Promise<Applications> {
     const application = this.createMinimumApplication(generation, part, user);
     application.status = Status.UnEnrolled;
-    application.finished = false;
     return await this.applicationRepository.save(application);
   }
 

@@ -27,9 +27,6 @@ export class Applications {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'bool' })
-  finished: boolean;
-
   @IsEnum(Status)
   @ApiProperty({ enum: Object.keys(Status) })
   @Column()
