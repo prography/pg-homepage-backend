@@ -1,7 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Applications } from 'src/infra/entity/Applications.entity';
 
-export class ApplicationCreateDto {
+export class ApplicationCreateDto extends PickType(Applications, [
+  'status',
+] as const) {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty({

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Answers } from 'src/infra/entity/Answers.entity';
-import { Applications } from 'src/infra/entity/Applications.entity';
+import { Applications, Status } from 'src/infra/entity/Applications.entity';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { Parts } from 'src/infra/entity/Parts.entity';
 import { Users } from 'src/infra/entity/Users.entity';
@@ -20,8 +20,7 @@ export class ApplicationBaseService {
     user: Users,
   ): Promise<Applications> {
     const application = this.createMinimumApplication(generation, part, user);
-    application.status = 'finalSubmit';
-    application.finished = true;
+    application.status = Status.Enrolled;
     return await this.applicationRepository.save(application);
   }
 
@@ -39,8 +38,7 @@ export class ApplicationBaseService {
     user: Users,
   ): Promise<Applications> {
     const application = this.createMinimumApplication(generation, part, user);
-    application.status = 'drafts';
-    application.finished = false;
+    application.status = Status.UnEnrolled;
     return await this.applicationRepository.save(application);
   }
 
