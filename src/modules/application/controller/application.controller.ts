@@ -31,6 +31,10 @@ export class ApplicationController {
     private readonly applicationAdminService: ApplicationAdminService,
   ) {}
 
+  @ApiOperation({
+    summary: '최종 제출을 하는 api입니다',
+    description: '사용자만 최종 제출을 할 수 있습니다',
+  })
   @Auth(Role.User)
   @Post('/')
   async createApplication(
@@ -43,6 +47,11 @@ export class ApplicationController {
     );
   }
 
+  @ApiOperation({
+    summary: '하나의 게시글을 가져옵니다',
+    description:
+      '사용자가 본인의 게시글일 경우 가져올 수 있고, 어드민도 가져올 수 있습니다',
+  })
   @Auth(Role.Admin, Role.User)
   @Get('/:applicationId')
   async getSpecificApplication(
@@ -60,7 +69,7 @@ export class ApplicationController {
   @ApiQuery({
     required: false,
     description:
-      '지원자의 상태를 이용해 조회합니다\n\nex) 최종 지원: finalSubmit. 임시저장: draft',
+      '지원자의 상태를 이용해 조회합니다\n\nex) 최종 지원: enrolled. 임시저장: unenrolled',
     name: 'status',
   })
   @ApiQuery({
@@ -72,6 +81,9 @@ export class ApplicationController {
     required: false,
     description: '기수 id를 이용해 조회합니다\n\n 기본값 현재 운영중인 기수',
     name: 'generation',
+  })
+  @ApiOperation({
+    summary: '어드민이 지원서를 이용해 처리하는 api입니다',
   })
   @Auth(Role.Admin)
   @Get('/')
@@ -111,6 +123,10 @@ export class ApplicationController {
     return await this.applicationAdminService.deleteById(applicationId);
   }
 
+  @ApiOperation({
+    summary: '임시저장용 api입니다',
+    description: '사용자는 자기 글을 이 api를 통해 임시저장할 수 있습니다',
+  })
   @Auth(Role.User)
   @Post('/draft')
   async createDraft(
