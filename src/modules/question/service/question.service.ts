@@ -1,12 +1,10 @@
 import { CommonService } from '@modules/common/common.service';
 import {
   BadRequestException,
-  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { Questions } from 'src/infra/entity/Questions.entity';
-import { Connection, DataSource } from 'typeorm';
 import {
   CreateQuestionRequestDto,
   CreateSelectOptionRequestDto,

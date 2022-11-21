@@ -39,14 +39,6 @@ export class UserBaseService {
     return await this.userRepository.save(userCreateDto);
   }
 
-  async findOrThrows(userId: number): Promise<Users> {
-    const user = await this.findById(userId);
-    if (!user) {
-      throw new NotFoundException('없는 사용자 입니다');
-    }
-    return user;
-  }
-
   async findUserAndApplicationsOrThrow(userId: number): Promise<Users> {
     const user = await this.userRepository
       .createQueryBuilder('user')

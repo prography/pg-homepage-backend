@@ -45,19 +45,19 @@ export class AwsRepository {
     }
   }
 
-  async deletePortfolioImageFileForS3(
-    fileName: string,
-    { bucketName, objectName }: AwsRepositoryRequestDto,
-  ) {
-    try {
-      return await new AWS.S3()
-        .deleteObject({
-          Key: fileName,
-          Bucket: `${bucketName}/${objectName}`,
-        })
-        .promise();
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  // async deletePortfolioImageFileForS3(
+  //   fileName: string,
+  //   { bucketName, objectName }: AwsRepositoryRequestDto,
+  // ) {
+  //   try {
+  //     return await new AWS.S3()
+  //       .deleteObject({
+  //         Key: fileName,
+  //         Bucket: `${bucketName}/${objectName}`,
+  //       })
+  //       .promise();
+  //   } catch (error) {
+  //     throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 }

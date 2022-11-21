@@ -29,7 +29,6 @@ const StatusResult = {
   fulfilled: 'fulfilled',
   rejected: 'rejected',
 } as const;
-type StatusResult = [keyof typeof StatusResult];
 class oneUpdateStatus {
   @IsEnum(StatusResult)
   status: string;
