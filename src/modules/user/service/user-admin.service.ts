@@ -21,4 +21,8 @@ export class UserAdminService {
   private async checkExistUser(userId: number) {
     return await this.userBaseService.findById(userId);
   }
+
+  async findUser(userId: number) {
+    return await this.userBaseService.findUserAndApplicationsOrThrow(userId);
+  }
 }

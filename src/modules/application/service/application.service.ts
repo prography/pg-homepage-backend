@@ -1,4 +1,5 @@
 import { TokenType } from '@modules/auth/role/rolesType';
+import { CommonService } from '@modules/common/common.service';
 import { GenerationGetCurrentResponseDto } from '@modules/generation/dto/reponse-generation.dto';
 import { GenerationService } from '@modules/generation/service/generation.service';
 import { PartBaseService } from '@modules/part/service/part-base.service';
@@ -9,12 +10,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Answers } from 'src/infra/entity/Answers.entity';
-import { Applications } from 'src/infra/entity/Applications.entity';
+import { Applications, Status } from 'src/infra/entity/Applications.entity';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { Parts } from 'src/infra/entity/Parts.entity';
 import { Users } from 'src/infra/entity/Users.entity';
 import { DataSource } from 'typeorm';
 import { ApplicationCreateDto } from '../dto/create-application.dto';
+import { ApplicationUpdateDto } from '../dto/update-application.dto';
 import { ApplicationBaseService } from './application-base.service';
 
 @Injectable()
@@ -25,6 +27,7 @@ export class ApplicationService {
     private readonly applicationBaseService: ApplicationBaseService,
     private readonly partBaseService: PartBaseService,
     private readonly dataSource: DataSource,
+    private readonly commonService: CommonService,
   ) {}
 
   async createFinalApplication(
@@ -32,45 +35,21 @@ export class ApplicationService {
     applicationCreateDto: ApplicationCreateDto,
   ): Promise<Applications> {
     const [user, generation, part] = await Promise.all([
-      this.userBaseService.findOrThrows(userToken.userId),
+      this.userBaseService.findUserAndApplicationsOrThrow(userToken.userId),
       this.generationService.findOneGenerationByCurrentDate(),
-      this.partBaseService.fromPartIdToSelectOptions(
+      this.partBaseService.fromPartIdToSelectOptionsOrThrow(
         applicationCreateDto.partId,
       ),
     ]);
     this.validateGeneration(applicationCreateDto, generation);
-
     return await this.saveAnswer(
       user,
       part,
       generation,
       applicationCreateDto,
-      this.applicationBaseService.saveFinalVersion,
+      this.saveFinalVersion.bind(this),
     );
   }
-
-  async createDraftApplication(
-    userToken: TokenType,
-    applicationCreateDto: ApplicationCreateDto,
-  ): Promise<Applications> {
-    const [user, generation, part] = await Promise.all([
-      this.userBaseService.findOrThrows(userToken.userId),
-      this.generationService.findOneGenerationByCurrentDate(),
-      this.partBaseService.fromPartIdToSelectOptions(
-        applicationCreateDto.partId,
-      ),
-    ]);
-    this.validateGeneration(applicationCreateDto, generation);
-
-    return await this.saveAnswer(
-      user,
-      part,
-      generation,
-      applicationCreateDto,
-      this.applicationBaseService.saveDraftVersion,
-    );
-  }
-
   private validateGeneration(
     applicationCreateDto: ApplicationCreateDto,
     generation: GenerationGetCurrentResponseDto,
@@ -78,6 +57,15 @@ export class ApplicationService {
     if (applicationCreateDto.generationId != generation.id) {
       throw new NotFoundException('잘못된 기수정보 입니다');
     }
+  }
+  private async saveFinalVersion(
+    generation: Generations,
+    part: Parts,
+    user: Users,
+  ): Promise<Applications> {
+    const application = this.createMinimumApplication(generation, part, user);
+    application.status = Status.Enrolled;
+    return await this.applicationBaseService.save(application);
   }
 
   private async saveAnswer(
@@ -90,8 +78,8 @@ export class ApplicationService {
       part: Parts,
       user: Users,
     ) => Promise<Applications>,
-  ): Promise<Applications> {
-    return await this.saveTransaction<Applications>(async () => {
+  ): Promise<any> {
+    return await this.commonService.transaction<Applications>(async () => {
       const questions = part.partsQuestions.map(
         (partQuestion) => partQuestion.question,
       );
@@ -114,20 +102,56 @@ export class ApplicationService {
     });
   }
 
-  private async saveTransaction<T>(executable: () => Promise<T>): Promise<T> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const result = executable();
-      await queryRunner.commitTransaction();
-      return result;
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      throw new BadRequestException(err.message);
-    } finally {
-      await queryRunner.release();
+  private createMinimumApplication(
+    generation: Generations,
+    part: Parts,
+    user: Users,
+  ): Applications {
+    const application = new Applications();
+    if (user.applications) {
+      application.id = user.applicationIds[user.applicationIds.length - 1];
     }
+    application.generation = generation;
+    application.part = part;
+    application.user = user;
+    return application;
+  }
+
+  async createDraftApplication(
+    userToken: TokenType,
+    applicationCreateDto: ApplicationCreateDto,
+  ): Promise<ApplicationUpdateDto> {
+    const [user, generation, part] = await Promise.all([
+      this.userBaseService.findUserAndApplicationsOrThrow(userToken.userId),
+      this.generationService.findOneGenerationByCurrentDate(),
+      this.partBaseService.fromPartIdToSelectOptionsOrThrow(
+        applicationCreateDto.partId,
+      ),
+    ]);
+    this.validateGeneration(applicationCreateDto, generation);
+    return await this.saveAnswer(
+      user,
+      part,
+      generation,
+      applicationCreateDto,
+      this.saveDraftVersion.bind(this),
+    );
+  }
+
+  private async saveDraftVersion(
+    generation: Generations,
+    part: Parts,
+    user: Users,
+  ): Promise<ApplicationUpdateDto> {
+    const application = this.createMinimumApplication(generation, part, user);
+    application.status = Status.UnEnrolled;
+    console.log(user);
+    const alreadyExistApplication = user.applications.filter(
+      (application) => application.status == Status.UnEnrolled,
+    )[0];
+    if (alreadyExistApplication) {
+      application.id = alreadyExistApplication.id;
+    }
+    return await this.applicationBaseService.update(application);
   }
 }
