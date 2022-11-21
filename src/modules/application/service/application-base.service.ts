@@ -14,22 +14,16 @@ export class ApplicationBaseService {
     private readonly answersRepository: AnswersRepository,
   ) {}
 
-  async saveFinalVersion(
-    generation: Generations,
-    part: Parts,
-    user: Users,
-  ): Promise<Applications> {
-    const application = this.createMinimumApplication(generation, part, user);
-    application.status = Status.Enrolled;
-    return await this.applicationRepository.save(application);
-  }
-
   async saveAnswers(answers: Answers[]) {
     return await Promise.all(
       answers.map((answer) => {
         this.answersRepository.save(answer);
       }),
     );
+  }
+
+  async save(application: Applications) {
+    return await this.applicationRepository.save(application);
   }
 
   async saveDraftVersion(
