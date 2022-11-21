@@ -62,7 +62,7 @@ export class ApplicationController {
   })
   @ApiQuery({
     required: false,
-    description: '기수 id를 이용해 조회합니다',
+    description: '기수 id를 이용해 조회합니다\n\n 기본값 현재 운영중인 기수',
     name: 'generation',
   })
   @Auth(Role.Admin)

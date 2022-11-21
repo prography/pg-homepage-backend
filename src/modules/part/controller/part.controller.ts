@@ -9,7 +9,7 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreatePartRequestDto } from '../dto/create-part.dto';
 import { UpdatePartRequestDto } from '../dto/update-part.dto';
 import { PartService } from '../service/part.service';
