@@ -10,13 +10,11 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Put,
   Query,
   Req,
 } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Applications } from 'src/infra/entity/Applications.entity';
-import { UpdateResult } from 'typeorm';
 import { ApplicationCreateDto } from '../dto/create-application.dto';
 import {
   ApplicationPutAllDto,
