@@ -55,7 +55,7 @@ export class ApplicationService {
       throw new NotFoundException('잘못된 기수정보 입니다');
     }
   }
-  async saveFinalVersion(
+  private async saveFinalVersion(
     generation: Generations,
     part: Parts,
     user: Users,
@@ -116,7 +116,7 @@ export class ApplicationService {
     }
   }
 
-  createMinimumApplication(
+  private createMinimumApplication(
     generation: Generations,
     part: Parts,
     user: Users,
@@ -152,7 +152,7 @@ export class ApplicationService {
     );
   }
 
-  async saveDraftVersion(
+  private async saveDraftVersion(
     generation: Generations,
     part: Parts,
     user: Users,
