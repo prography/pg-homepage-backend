@@ -148,7 +148,17 @@ export class ApplicationService {
       part,
       generation,
       applicationCreateDto,
-      this.applicationBaseService.saveDraftVersion.bind(this),
+      this.saveDraftVersion.bind(this),
     );
+  }
+
+  async saveDraftVersion(
+    generation: Generations,
+    part: Parts,
+    user: Users,
+  ): Promise<Applications> {
+    const application = this.createMinimumApplication(generation, part, user);
+    application.status = Status.UnEnrolled;
+    return await this.applicationBaseService.save(application);
   }
 }
