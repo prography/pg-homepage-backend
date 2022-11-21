@@ -50,4 +50,11 @@ export class UserService {
   private async checkExistUser(userId: number) {
     return await this.userBaseService.findById(userId);
   }
+
+  async findUser(userToken: TokenType, userId: number) {
+    if (userToken?.userId != userId) {
+      throw new ForbiddenException('사용자가 잘못된 데이터에 접근했습니다');
+    }
+    return this.userBaseService.findUserAndApplicationsOrThrow(userId);
+  }
 }
