@@ -4,7 +4,6 @@ import { Applications } from 'src/infra/entity/Applications.entity';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { Parts } from 'src/infra/entity/Parts.entity';
 import { Users } from 'src/infra/entity/Users.entity';
-import { ApplicationCreateDto } from '../dto/create-application.dto';
 import { AnswersRepository } from '../repository/answer.repository';
 import { ApplicationRepository } from '../repository/application.repository';
 
@@ -15,25 +14,15 @@ export class ApplicationBaseService {
     private readonly answersRepository: AnswersRepository,
   ) {}
 
-  create(applicationCreateDto: ApplicationCreateDto): Applications {
-    const application = new Applications();
-    // application.answers = applicationCreateDto.answers;
-
-    return application;
-  }
-
   async saveFinalVersion(
     generation: Generations,
     part: Parts,
     user: Users,
   ): Promise<Applications> {
-    const applications = new Applications();
-    applications.finished = true;
-    applications.generation = generation;
-    applications.part = part;
-    applications.status = '최종지원';
-    applications.user = user;
-    return await this.applicationRepository.save(applications);
+    const application = this.createMinimumApplication(generation, part, user);
+    application.status = 'finalSubmit';
+    application.finished = true;
+    return await this.applicationRepository.save(application);
   }
 
   async saveAnswers(answers: Answers[]) {
@@ -42,5 +31,31 @@ export class ApplicationBaseService {
         this.answersRepository.save(answer);
       }),
     );
+  }
+
+  async saveDraftVersion(
+    generation: Generations,
+    part: Parts,
+    user: Users,
+  ): Promise<Applications> {
+    const application = this.createMinimumApplication(generation, part, user);
+    application.status = 'drafts';
+    application.finished = false;
+    return await this.applicationRepository.save(application);
+  }
+
+  createMinimumApplication(
+    generation: Generations,
+    part: Parts,
+    user: Users,
+  ): Applications {
+    const application = new Applications();
+    if (user.applications) {
+      application.id = user.applicationIds[user.applicationIds.length - 1];
+    }
+    application.generation = generation;
+    application.part = part;
+    application.user = user;
+    return application;
   }
 }
