@@ -28,4 +28,16 @@ export class ApplicationAdminService {
       ),
     );
   }
+
+  async findWithQuery(
+    partId?: string,
+    status?: string,
+    generationId?: string,
+  ): Promise<Applications[]> {
+    return await this.applicationBaseService.findWithQuery(
+      partId,
+      status,
+      generationId,
+    );
+  }
 }

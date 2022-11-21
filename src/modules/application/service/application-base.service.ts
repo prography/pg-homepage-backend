@@ -43,4 +43,25 @@ export class ApplicationBaseService {
   async updateAll(applicationId: number, application: Partial<Applications>) {
     return await this.applicationRepository.update(applicationId, application);
   }
+
+  async findWithQuery(
+    partId?: string,
+    status?: string,
+    generationId?: string,
+  ): Promise<Applications[]> {
+    const queryBuilder =
+      this.applicationRepository.createQueryBuilder('application');
+    if (partId) {
+      queryBuilder.where('application.part = :partId', { partId });
+    }
+    if (status) {
+      queryBuilder.andWhere('application.status = :status', { status });
+    }
+    if (generationId) {
+      queryBuilder.andWhere('application.generation = :generationId', {
+        generationId,
+      });
+    }
+    return await queryBuilder.getMany();
+  }
 }
