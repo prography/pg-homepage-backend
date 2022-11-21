@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Answers } from 'src/infra/entity/Answers.entity';
-import { Applications, Status } from 'src/infra/entity/Applications.entity';
-import { Generations } from 'src/infra/entity/Generations.entity';
-import { Parts } from 'src/infra/entity/Parts.entity';
-import { Users } from 'src/infra/entity/Users.entity';
+import { Applications } from 'src/infra/entity/Applications.entity';
 import { AnswersRepository } from '../repository/answer.repository';
 import { ApplicationRepository } from '../repository/application.repository';
 
@@ -24,30 +21,5 @@ export class ApplicationBaseService {
 
   async save(application: Applications) {
     return await this.applicationRepository.save(application);
-  }
-
-  async saveDraftVersion(
-    generation: Generations,
-    part: Parts,
-    user: Users,
-  ): Promise<Applications> {
-    const application = this.createMinimumApplication(generation, part, user);
-    application.status = Status.UnEnrolled;
-    return await this.applicationRepository.save(application);
-  }
-
-  createMinimumApplication(
-    generation: Generations,
-    part: Parts,
-    user: Users,
-  ): Applications {
-    const application = new Applications();
-    if (user.applications) {
-      application.id = user.applicationIds[user.applicationIds.length - 1];
-    }
-    application.generation = generation;
-    application.part = part;
-    application.user = user;
-    return application;
   }
 }
