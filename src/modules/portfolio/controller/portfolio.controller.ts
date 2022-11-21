@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import {
-  ApiBearerAuth,
   ApiConsumes,
   ApiOkResponse,
   ApiOperation,
@@ -68,7 +67,7 @@ export class PortfolioController {
     @Body() portfolioPutDto: PortfolioPutDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return await this.portfolioService.updatePortfoiloById(
+    return await this.portfolioService.updatePortfolioById(
       id,
       portfolioPutDto,
       files,
@@ -83,6 +82,6 @@ export class PortfolioController {
     type: PortfolioDeleteResponseDto,
   })
   async portfolioDelete(@Param('portfolioid') id: number) {
-    return await this.portfolioService.deletePortfoiloById(id);
+    return await this.portfolioService.deletePortfolioById(id);
   }
 }

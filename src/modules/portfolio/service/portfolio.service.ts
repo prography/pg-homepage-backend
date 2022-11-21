@@ -71,7 +71,7 @@ export class PortfolioService {
     };
   }
 
-  async updatePortfoiloById(
+  async updatePortfolioById(
     portfolioId: number,
     {
       generationId,
@@ -101,12 +101,12 @@ export class PortfolioService {
     });
   }
 
-  async deletePortfoiloById(portfolioId: number) {
+  async deletePortfolioById(portfolioId: number) {
     return await this.portfolioRepository.deleteOneById(portfolioId);
   }
 
   /**
-   * @parms files - Form 태그로 받은 모든 이미지 바이너리가 Array 형태로 입력
+   * @params files - Form 태그로 받은 모든 이미지 바이너리가 Array 형태로 입력
    * @returns AWS S3주소
    */
   private async uploadPortfolioImageFileAll(

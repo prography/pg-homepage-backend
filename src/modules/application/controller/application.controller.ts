@@ -140,10 +140,7 @@ export class ApplicationController {
   }
 
   private isAdmin(userToken: TokenType): boolean {
-    if (userToken.roles.includes('admin')) {
-      return true;
-    }
-    return false;
+    return userToken.roles.includes('admin');
   }
 
   private filterOnlyStatus<T extends { status: string }>(
