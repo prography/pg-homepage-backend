@@ -75,7 +75,7 @@ export class ApplicationService {
       part: Parts,
       user: Users,
     ) => Promise<Applications>,
-  ): Promise<Applications> {
+  ): Promise<any> {
     return await this.saveTransaction<Applications>(async () => {
       const questions = part.partsQuestions.map(
         (partQuestion) => partQuestion.question,
@@ -134,9 +134,9 @@ export class ApplicationService {
   async createDraftApplication(
     userToken: TokenType,
     applicationCreateDto: ApplicationCreateDto,
-  ): Promise<Applications> {
+  ): Promise<ApplicationUpdateDto> {
     const [user, generation, part] = await Promise.all([
-      this.userBaseService.findOrThrows(userToken.userId),
+      this.userBaseService.findUserAndApplicationsOrThrow(userToken.userId),
       this.generationService.findOneGenerationByCurrentDate(),
       this.partBaseService.fromPartIdToSelectOptionsOrThrow(
         applicationCreateDto.partId,
@@ -156,9 +156,16 @@ export class ApplicationService {
     generation: Generations,
     part: Parts,
     user: Users,
-  ): Promise<Applications> {
+  ): Promise<ApplicationUpdateDto> {
     const application = this.createMinimumApplication(generation, part, user);
     application.status = Status.UnEnrolled;
-    return await this.applicationBaseService.save(application);
+    console.log(user);
+    const alreadyExistApplication = user.applications.filter(
+      (application) => application.status == Status.UnEnrolled,
+    )[0];
+    if (alreadyExistApplication) {
+      application.id = alreadyExistApplication.id;
+    }
+    return await this.applicationBaseService.update(application);
   }
 }

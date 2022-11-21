@@ -12,3 +12,8 @@ class ApplicationPutDtoWithId extends ApplicationPutDto {
 export class ApplicationPutAllDto {
   applications: ApplicationPutDtoWithId[];
 }
+
+export class ApplicationUpdateDto {
+  @ApiProperty({ description: '변경된 row 갯수', example: '1' })
+  affected?: number;
+}
