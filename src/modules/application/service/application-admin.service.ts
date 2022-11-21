@@ -1,3 +1,4 @@
+import { GenerationService } from '@modules/generation/service/generation.service';
 import { Injectable } from '@nestjs/common';
 import { Applications } from 'src/infra/entity/Applications.entity';
 import { UpdateResult } from 'typeorm';
@@ -8,6 +9,7 @@ import { ApplicationBaseService } from './application-base.service';
 export class ApplicationAdminService {
   constructor(
     private readonly applicationBaseService: ApplicationBaseService,
+    private readonly generationService: GenerationService,
   ) {}
   async findOneApplication(applicationId: number): Promise<Applications> {
     return this.applicationBaseService.findById(applicationId);
@@ -34,6 +36,10 @@ export class ApplicationAdminService {
     status?: string,
     generationId?: string,
   ): Promise<Applications[]> {
+    if (!generationId) {
+      generationId =
+        (await this.generationService.findOneGenerationByCurrentDate()).id + '';
+    }
     return await this.applicationBaseService.findWithQuery(
       partId,
       status,
