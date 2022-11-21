@@ -34,12 +34,11 @@ export class ApplicationService {
     const [user, generation, part] = await Promise.all([
       this.userBaseService.findOrThrows(userToken.userId),
       this.generationService.findOneGenerationByCurrentDate(),
-      this.partBaseService.fromPartIdToSelectOptions(
+      this.partBaseService.fromPartIdToSelectOptionsOrThrow(
         applicationCreateDto.partId,
       ),
     ]);
     this.validateGeneration(applicationCreateDto, generation);
-
     return await this.saveAnswer(
       user,
       part,
