@@ -15,11 +15,14 @@ export class PortfolioGetResponseDto extends PortfolioControllerDto {
     description: '이미지 URL',
     example: `[\"https://pg-renewal-portfolio-images.s3.ap-northeast-2.amazonaws.com/portfolio_images/1667202502511103241850.png\"]`,
   })
-  imageUrl: string;
+  imageUrl: string[];
   generation: PortfolioGenerationDto;
 }
 
-export class PortfolioPutResponseDto extends PortfolioGetResponseDto {}
+export class PortfolioPutResponseDto {
+  @ApiProperty({ description: '변경된 row 갯수', example: '1' })
+  affected: number;
+}
 
 export class PortfolioDeleteResponseDto {
   @ApiProperty({ description: '변경된 row 갯수', example: '1' })

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsJSON, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class PortfolioControllerDto {
   @IsNotEmpty()
@@ -13,13 +13,14 @@ export class PortfolioControllerDto {
   readonly teamName: string;
 
   @IsNotEmpty()
-  @IsJSON()
+  @IsArray()
   @ApiProperty({
     example: `["신성환","정유진","강동하","송은우","이한나","이재준"]`,
     description: '멤버',
     required: true,
+    isArray: true,
   })
-  readonly teamMembers: string;
+  readonly teamMembers: string[];
 
   @IsNotEmpty()
   @IsString()
@@ -40,13 +41,14 @@ export class PortfolioControllerDto {
   readonly projectDescription: string;
 
   @IsNotEmpty()
-  @IsJSON()
+  @IsArray()
   @ApiProperty({
     example: `["React","Spring","Nest.js"]`,
     description: '프레임워크 종류',
     required: true,
+    isArray: true,
   })
-  readonly frameworks: string;
+  readonly frameworks: string[];
 }
 
 export class PortfolioCreateDto extends PortfolioControllerDto {
