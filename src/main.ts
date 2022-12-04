@@ -5,7 +5,7 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 // import * as cookieParser from 'cookie-parser';
 import * as Sentry from '@sentry/node';
 import { AppModule } from './app.module';
-import { setupSwagger } from './core/swagger';
+import { setupSwagger } from '@core/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

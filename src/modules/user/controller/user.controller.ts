@@ -27,8 +27,8 @@ import {
   UserChangedResultDto,
   UserPutDto,
 } from '../dto/put-user.dto';
-import { UserAdminService } from '../service/user-admin.service';
-import { UserService } from '../service/user.service';
+import { UserAdminService } from '@modules/user/service';
+import { UserService } from '@modules/user/service';
 
 @ApiTags('User')
 @Controller('user')

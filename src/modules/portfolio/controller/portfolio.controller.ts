@@ -12,9 +12,11 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import {
-  ApiBearerAuth,
+  AnyFilesInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
+import {
   ApiConsumes,
   ApiOkResponse,
   ApiOperation,
@@ -49,7 +51,7 @@ export class PortfolioController {
   @ApiOperation({ summary: '포트폴리오 저장' })
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(AnyFilesInterceptor())
   async portfolioCreate(
     @Body() portfolioCreateDto: PortfolioCreateDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
@@ -68,7 +70,7 @@ export class PortfolioController {
     @Body() portfolioPutDto: PortfolioPutDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ) {
-    return await this.portfolioService.updatePortfoiloById(
+    return await this.portfolioService.updatePortfolioById(
       id,
       portfolioPutDto,
       files,
@@ -83,6 +85,6 @@ export class PortfolioController {
     type: PortfolioDeleteResponseDto,
   })
   async portfolioDelete(@Param('portfolioid') id: number) {
-    return await this.portfolioService.deletePortfoiloById(id);
+    return await this.portfolioService.deletePortfolioById(id);
   }
 }

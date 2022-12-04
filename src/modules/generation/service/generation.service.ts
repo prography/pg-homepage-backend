@@ -4,7 +4,6 @@ import { Generations } from 'src/infra/entity/Generations.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import {
   GenerationDeleteResponseDto,
-  GenerationGetCurrentResponseDto,
   GenerationGetResponseDto,
   GenerationPutResponseDto,
 } from '../dto/reponse-generation.dto';
@@ -69,13 +68,10 @@ export class GenerationService {
     );
     const startMoment = moment(startDate);
     const endMoment = moment(endDate);
-    if (
+    return (
       currentMoment.isSameOrAfter(startMoment) &&
       currentMoment.isSameOrBefore(endMoment)
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   async findOneGenerationById(id: number): Promise<GenerationGetResponseDto> {
