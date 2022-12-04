@@ -24,6 +24,6 @@ export class CreateQuestionRequestDto extends PickType(Questions, [
   @IsNumber({}, { each: true })
   partIds: number[];
 
-  @ApiProperty({ description: '객관식 문항의 보기' })
+  @ApiProperty({ description: '객관식 문항의 보기', required: false })
   selectOptions: CreateSelectOptionRequestDto[];
 }
