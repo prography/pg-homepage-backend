@@ -21,7 +21,11 @@ export const ApiMultiFile =
             type: 'string',
           },
           teamMembers: {
-            type: 'string',
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            example: '["이재준","윤세림","주윤겸","장지훈"]',
           },
           projectName: {
             type: 'string',
@@ -33,7 +37,10 @@ export const ApiMultiFile =
             type: 'number',
           },
           frameworks: {
-            type: 'string',
+            type: 'array',
+            items: {
+              type: 'string',
+            },
           },
         },
       },

@@ -12,7 +12,10 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  AnyFilesInterceptor,
+  FilesInterceptor,
+} from '@nestjs/platform-express';
 import {
   ApiConsumes,
   ApiOkResponse,
@@ -48,7 +51,7 @@ export class PortfolioController {
   @ApiOperation({ summary: '포트폴리오 저장' })
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
-  @UseInterceptors(FilesInterceptor('files'))
+  @UseInterceptors(AnyFilesInterceptor())
   async portfolioCreate(
     @Body() portfolioCreateDto: PortfolioCreateDto,
     @UploadedFiles() files: Array<Express.Multer.File>,
