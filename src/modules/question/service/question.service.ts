@@ -36,7 +36,7 @@ export class QuestionService {
     return await this.commonService.transaction(async () => {
       const question = await this.questionRepository.save(data);
 
-      if (data.type == '객관식') {
+      if (data.type == 'CHOICE' || data.type == 'CHECKBOX') {
         if (selectOptions.length == 0) {
           throw new BadRequestException('빈 데이터');
         }
