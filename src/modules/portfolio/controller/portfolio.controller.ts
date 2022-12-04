@@ -59,6 +59,10 @@ export class PortfolioController {
   @Put(':portfolioid')
   @Auth(Role.Admin)
   @ApiOperation({ summary: '특정 포트폴리오 수정' })
+  @ApiOkResponse({
+    description: 'affected는 변경된 row의 갯수',
+    type: PortfolioDeleteResponseDto,
+  })
   @ApiConsumes('multipart/form-data')
   @ApiMultiFile()
   @UseInterceptors(AnyFilesInterceptor())

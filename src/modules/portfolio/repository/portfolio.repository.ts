@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { Portfolios } from 'src/infra/entity/Portpolios.entity';
-import { DeleteResult, Equal, Repository } from 'typeorm';
+import { DeleteResult, Equal, Repository, UpdateResult } from 'typeorm';
 
 export type PortfolioRepositoryDto = {
   imageUrl: string;
@@ -67,8 +67,10 @@ export class PortfolioRepository {
   async updateOneById(
     id: number,
     portfolioData: PortfolioRepositoryDto,
-  ): Promise<Portfolios> {
-    return await this.portfolioRepository.save({ id, portfolioData });
+  ): Promise<UpdateResult> {
+    return await this.portfolioRepository.update(id, {
+      ...portfolioData,
+    });
   }
 
   async deleteOneById(portfolioId: number): Promise<DeleteResult> {

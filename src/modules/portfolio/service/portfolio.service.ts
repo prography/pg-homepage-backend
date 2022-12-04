@@ -1,19 +1,17 @@
 import { AwsRepository } from '@modules/aws/repository/aws.repository';
 import { GenerationRepository } from '@modules/generation/repository/generation.repository';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import {
-  PortfolioGetResponseDto,
-  PortfolioPutResponseDto,
-} from '../dto/reponse-portfolio.dto';
+import { UpdateResult } from 'typeorm';
+import { PortfolioGetResponseDto } from '../dto/reponse-portfolio.dto';
 import { PortfolioRepository } from '../repository/portfolio.repository';
 
 export type PortfolioServiceDto = {
   generationId: number;
   projectDescription: string;
   projectName: string;
-  teamMembers: string;
+  teamMembers: string[];
   teamName: string;
-  frameworks: string;
+  frameworks: string[];
 };
 
 export const bucketName = `pg-renewal-portfolio-images`;
@@ -28,12 +26,26 @@ export class PortfolioService {
   ) {}
 
   async findAllPortfolio(): Promise<PortfolioGetResponseDto[]> {
-    return await this.portfolioRepository.findAll();
+    const findAllResult = await this.portfolioRepository.findAll();
+    const findAllResultToJSON = [];
+    for (const findResult of findAllResult) {
+      findResult.frameworks = JSON.parse(findResult.frameworks);
+      findResult.imageUrl = JSON.parse(findResult.imageUrl);
+      findResult.teamMembers = JSON.parse(findResult.teamMembers);
+      findAllResultToJSON.push(findResult);
+    }
+    return findAllResultToJSON;
   }
   async findPortfolioById(
     portfolioId: number,
   ): Promise<PortfolioGetResponseDto> {
-    return await this.portfolioRepository.findOneById(portfolioId);
+    const findResult = await this.portfolioRepository.findOneById(portfolioId);
+    return {
+      ...findResult,
+      imageUrl: JSON.parse(findResult.imageUrl),
+      frameworks: JSON.parse(findResult.frameworks),
+      teamMembers: JSON.parse(findResult.teamMembers),
+    };
   }
   async savePortfolio(
     {
@@ -59,11 +71,14 @@ export class PortfolioService {
       projectName,
       projectDescription,
       teamName,
-      teamMembers,
-      frameworks,
+      teamMembers: JSON.stringify(teamMembers),
+      frameworks: JSON.stringify(frameworks),
     });
     return {
       ...createResult,
+      teamMembers: JSON.parse(createResult.teamMembers),
+      frameworks: JSON.parse(createResult.frameworks),
+      imageUrl: JSON.parse(createResult.imageUrl),
       generation: {
         id: createResult.generation.id,
         name: createResult.generation.name,
@@ -82,7 +97,7 @@ export class PortfolioService {
       frameworks,
     }: PortfolioServiceDto,
     files: Array<Express.Multer.File>,
-  ): Promise<PortfolioPutResponseDto> {
+  ): Promise<UpdateResult> {
     const generationResult = await this.generationRepository.findOneById(
       generationId,
     );
@@ -96,8 +111,8 @@ export class PortfolioService {
       projectName,
       projectDescription,
       teamName,
-      teamMembers,
-      frameworks,
+      teamMembers: JSON.stringify(teamMembers),
+      frameworks: JSON.stringify(frameworks),
     });
   }
 
