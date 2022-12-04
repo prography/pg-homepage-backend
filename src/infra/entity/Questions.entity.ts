@@ -13,8 +13,10 @@ import { PartsQuestions } from './parts-questions.entity';
 import { SelectOptions } from './SelectOptions.entity';
 
 const Question = {
-  CHOICE: '객관식',
-  ESSAY: '주관식',
+  CHOICE: 'CHOICE',
+  SHORT: 'SHORT',
+  LONG: 'LONG',
+  CHECKBOX: 'CHECKBOX',
 } as const;
 
 type QuestionType = typeof Question[keyof typeof Question];
