@@ -47,6 +47,9 @@ export class Questions {
 
   @Column()
   @IsBoolean()
+  @ApiProperty({
+    description: '질문에 대한 답변을 필수로 해야하는지 여부 true: 필수',
+  })
   required: boolean;
 
   @OneToMany(() => SelectOptions, (selectOption) => selectOption.question)
