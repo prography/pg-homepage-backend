@@ -15,7 +15,6 @@ import { Applications, Status } from 'src/infra/entity/Applications.entity';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { Parts } from 'src/infra/entity/Parts.entity';
 import { Users } from 'src/infra/entity/Users.entity';
-import { DataSource } from 'typeorm';
 import { ApplicationCreateDto } from '../dto/create-application.dto';
 import { ApplicationUpdateDto } from '../dto/update-application.dto';
 import { ApplicationBaseService } from './application-base.service';
@@ -27,7 +26,6 @@ export class ApplicationService {
     private readonly generationService: GenerationService,
     private readonly applicationBaseService: ApplicationBaseService,
     private readonly partBaseService: PartBaseService,
-    private readonly dataSource: DataSource,
     private readonly commonService: CommonService,
   ) {}
 
@@ -43,13 +41,16 @@ export class ApplicationService {
       ),
     ]);
     this.validateGeneration(applicationCreateDto, generation);
-    return await this.saveAnswer(
-      user,
-      part,
-      generation,
-      applicationCreateDto,
-      this.saveFinalVersion.bind(this),
-    );
+
+    return await this.commonService.transaction<Applications>(async () => {
+      return await this.saveAnswer(
+        user,
+        part,
+        generation,
+        applicationCreateDto,
+        this.saveFinalVersion.bind(this),
+      );
+    });
   }
   private validateGeneration(
     applicationCreateDto: ApplicationCreateDto,
@@ -80,27 +81,25 @@ export class ApplicationService {
       user: Users,
     ) => Promise<Applications>,
   ): Promise<any> {
-    return await this.commonService.transaction<Applications>(async () => {
-      const questions = part.partsQuestions.map(
-        (partQuestion) => partQuestion.question,
-      );
-      const application = await saveTo(generation, part, user);
-      const answers: Answers[] = applicationCreateDto.answers.map((answer) => {
-        const oneQuestion = questions.filter(
-          (question) => question.id == answer.questionId,
-        )[0];
-        if (oneQuestion == undefined) {
-          throw new BadRequestException('질문 답변쌍이 잘못된 값입니다');
-        }
-        const temp = new Answers();
-        temp.question = oneQuestion;
-        temp.value = answer.answer;
-        temp.application = application;
-        return temp;
-      });
-      await this.applicationBaseService.saveAnswers(answers);
-      return application;
+    const questions = part.partsQuestions.map(
+      (partQuestion) => partQuestion.question,
+    );
+    const application = await saveTo(generation, part, user);
+    const answers: Answers[] = applicationCreateDto.answers.map((answer) => {
+      const oneQuestion = questions.filter(
+        (question) => question.id == answer.questionId,
+      )[0];
+      if (oneQuestion == undefined) {
+        throw new BadRequestException('질문 답변쌍이 잘못된 값입니다');
+      }
+      const temp = new Answers();
+      temp.question = oneQuestion;
+      temp.value = answer.answer;
+      temp.application = application;
+      return temp;
     });
+    await this.applicationBaseService.saveAnswers(answers);
+    return application;
   }
 
   private createMinimumApplication(
@@ -130,12 +129,16 @@ export class ApplicationService {
       ),
     ]);
     this.validateGeneration(applicationCreateDto, generation);
-    return await this.saveAnswer(
-      user,
-      part,
-      generation,
-      applicationCreateDto,
-      this.saveDraftVersion.bind(this),
+    return await this.commonService.transaction<ApplicationUpdateDto>(
+      async () => {
+        return await this.saveAnswer(
+          user,
+          part,
+          generation,
+          applicationCreateDto,
+          this.saveDraftVersion.bind(this),
+        );
+      },
     );
   }
 
