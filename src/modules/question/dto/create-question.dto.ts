@@ -20,6 +20,7 @@ export class CreateQuestionRequestDto extends PickType(Questions, [
   'text',
   'questionNumber',
   'generationId',
+  'required',
 ] as const) {
   @IsNumber({}, { each: true })
   partIds: number[];

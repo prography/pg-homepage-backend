@@ -1,3 +1,4 @@
+import { ApiHideProperty } from '@nestjs/swagger';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Questions } from './Questions.entity';
 
@@ -15,6 +16,7 @@ export class SelectOptions {
   @Column()
   questionId: number;
 
+  @ApiHideProperty()
   @ManyToOne(() => Questions, (question) => question.selectOptions, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
