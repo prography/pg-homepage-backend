@@ -41,7 +41,6 @@ export class ApplicationController {
     @Req() { user }: RequestWithToken,
     @Body() applicationCreateDto: ApplicationCreateDto,
   ): Promise<Applications> {
-    console.log('hello');
     return await this.applicationService.createFinalApplication(
       user,
       applicationCreateDto,
@@ -134,7 +133,6 @@ export class ApplicationController {
     @Req() { user }: RequestWithToken,
     @Body() applicationCreateDto: ApplicationCreateDto,
   ): Promise<ApplicationUpdateDto> {
-    console.log('hello');
     return await this.applicationService.createDraftApplication(
       user,
       applicationCreateDto,

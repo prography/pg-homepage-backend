@@ -108,9 +108,9 @@ export class ApplicationService {
     user: Users,
   ): Applications {
     const application = new Applications();
-    if (user.applications) {
-      application.id = user.applicationIds[user.applicationIds.length - 1];
-    }
+    // if (user.applications) {
+    //   application.id = user.applicationIds[user.applicationIds.length - 1];
+    // }
     application.generation = generation;
     application.part = part;
     application.user = user;
@@ -129,6 +129,7 @@ export class ApplicationService {
       ),
     ]);
     this.validateGeneration(applicationCreateDto, generation);
+
     return await this.commonService.transaction<ApplicationUpdateDto>(
       async () => {
         return await this.saveAnswer(
@@ -146,7 +147,7 @@ export class ApplicationService {
     generation: Generations,
     part: Parts,
     user: Users,
-  ): Promise<ApplicationUpdateDto> {
+  ): Promise<Applications> {
     const application = this.createMinimumApplication(generation, part, user);
     application.status = Status.UnEnrolled;
     const alreadyExistApplication = user.applications.filter(
@@ -154,8 +155,9 @@ export class ApplicationService {
     )[0];
     if (alreadyExistApplication) {
       application.id = alreadyExistApplication.id;
+      await this.applicationBaseService.deleteById(alreadyExistApplication.id);
     }
-    return await this.applicationBaseService.update(application);
+    return await this.applicationBaseService.save(application);
   }
 
   async findOneApplication(userToken: TokenType, applicationId: number) {
