@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   Entity,
@@ -44,6 +44,10 @@ export class Questions {
   @IsNumber()
   @Column()
   generationId: number;
+
+  @Column()
+  @IsBoolean()
+  required: boolean;
 
   @OneToMany(() => SelectOptions, (selectOption) => selectOption.question)
   selectOptions: SelectOptions[];
