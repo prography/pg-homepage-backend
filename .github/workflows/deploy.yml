@@ -74,6 +74,7 @@ jobs:
         run: |
           mkdir -p deploy
           cp Dockerrun.aws.json deploy/Dockerrun.aws.json
+          cp .platform/nginx/conf.d/proxy.conf deploy/.platform/nginx/conf.d/proxy.conf
           cd deploy && zip -r deploy.zip .
 
       - name: Beanstalk Deploy
