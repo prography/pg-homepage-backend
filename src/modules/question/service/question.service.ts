@@ -1,9 +1,5 @@
 import { CommonService } from '@modules/common/common.service';
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Questions } from 'src/infra/entity/Questions.entity';
 import { questionSaveStrategyFactory } from '../domain/question.factory';
 import {
