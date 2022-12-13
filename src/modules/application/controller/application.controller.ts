@@ -132,7 +132,7 @@ export class ApplicationController {
   async createDraft(
     @Req() { user }: RequestWithToken,
     @Body() applicationCreateDto: ApplicationCreateDto,
-  ): Promise<ApplicationUpdateDto> {
+  ): Promise<Applications> {
     return await this.applicationService.createDraftApplication(
       user,
       applicationCreateDto,

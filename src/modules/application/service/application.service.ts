@@ -15,8 +15,10 @@ import { Applications, Status } from 'src/infra/entity/Applications.entity';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { Parts } from 'src/infra/entity/Parts.entity';
 import { Users } from 'src/infra/entity/Users.entity';
-import { ApplicationCreateDto } from '../dto/create-application.dto';
-import { ApplicationUpdateDto } from '../dto/update-application.dto';
+import {
+  AnswerCreateDto,
+  ApplicationCreateDto,
+} from '../dto/create-application.dto';
 import { ApplicationBaseService } from './application-base.service';
 
 @Injectable()
@@ -43,15 +45,17 @@ export class ApplicationService {
     this.validateGeneration(applicationCreateDto, generation);
 
     return await this.commonService.transaction<Applications>(async () => {
-      return await this.saveAnswer(
-        user,
-        part,
-        generation,
+      const application = await this.saveFinalVersion(generation, part, user);
+      const answers: Answers[] = this.createAnswers(
         applicationCreateDto,
-        this.saveFinalVersion.bind(this),
+        part,
+        application,
       );
+      await this.applicationBaseService.saveAnswers(answers);
+      return application;
     });
   }
+
   private validateGeneration(
     applicationCreateDto: ApplicationCreateDto,
     generation: GenerationGetCurrentResponseDto,
@@ -70,36 +74,33 @@ export class ApplicationService {
     return await this.applicationBaseService.save(application);
   }
 
-  private async saveAnswer(
-    user: Users,
-    part: Parts,
-    generation: Generations,
+  private createAnswers(
     applicationCreateDto: ApplicationCreateDto,
-    saveTo: (
-      generation: Generations,
-      part: Parts,
-      user: Users,
-    ) => Promise<Applications>,
-  ): Promise<any> {
+    part: Parts,
+    application: Applications,
+  ): Answers[] {
     const questions = part.partsQuestions.map(
       (partQuestion) => partQuestion.question,
     );
-    const application = await saveTo(generation, part, user);
-    const answers: Answers[] = applicationCreateDto.answers.map((answer) => {
-      const oneQuestion = questions.filter(
-        (question) => question.id == answer.questionId,
-      )[0];
-      if (oneQuestion == undefined) {
-        throw new BadRequestException('질문 답변쌍이 잘못된 값입니다');
-      }
-      const temp = new Answers();
-      temp.question = oneQuestion;
-      temp.value = answer.answer;
-      temp.application = application;
-      return temp;
-    });
-    await this.applicationBaseService.saveAnswers(answers);
-    return application;
+
+    const answers: Answers[] = applicationCreateDto.answers.map(
+      (answerCreateDto: AnswerCreateDto) => {
+        const oneQuestion = questions.filter(
+          (question) => question.id == answerCreateDto.questionId,
+        )[0];
+
+        if (oneQuestion == undefined) {
+          throw new BadRequestException('질문 답변쌍이 잘못된 값입니다');
+        }
+
+        const answer = new Answers();
+        answer.question = oneQuestion;
+        answer.value = answerCreateDto.answer;
+        answer.application = application;
+        return answer;
+      },
+    );
+    return answers;
   }
 
   private createMinimumApplication(
@@ -108,9 +109,6 @@ export class ApplicationService {
     user: Users,
   ): Applications {
     const application = new Applications();
-    // if (user.applications) {
-    //   application.id = user.applicationIds[user.applicationIds.length - 1];
-    // }
     application.generation = generation;
     application.part = part;
     application.user = user;
@@ -120,7 +118,7 @@ export class ApplicationService {
   async createDraftApplication(
     userToken: TokenType,
     applicationCreateDto: ApplicationCreateDto,
-  ): Promise<ApplicationUpdateDto> {
+  ): Promise<Applications> {
     const [user, generation, part] = await Promise.all([
       this.userBaseService.findUserAndApplicationsOrThrow(userToken.userId),
       this.generationService.findOneGenerationByCurrentDate(),
@@ -130,17 +128,16 @@ export class ApplicationService {
     ]);
     this.validateGeneration(applicationCreateDto, generation);
 
-    return await this.commonService.transaction<ApplicationUpdateDto>(
-      async () => {
-        return await this.saveAnswer(
-          user,
-          part,
-          generation,
-          applicationCreateDto,
-          this.saveDraftVersion.bind(this),
-        );
-      },
-    );
+    return await this.commonService.transaction<Applications>(async () => {
+      const application = await this.saveDraftVersion(generation, part, user);
+      const answers: Answers[] = this.createAnswers(
+        applicationCreateDto,
+        part,
+        application,
+      );
+      await this.applicationBaseService.saveAnswers(answers);
+      return application;
+    });
   }
 
   private async saveDraftVersion(
