@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Questions } from 'src/infra/entity/Questions.entity';
+import { questionSaveStrategyFactory } from '../domain/question.factory';
 import {
   CreateQuestionRequestDto,
   CreateSelectOptionRequestDto,
@@ -27,38 +28,19 @@ export class QuestionService {
     return this.questionRepository.findAllByPartIds(partIds);
   }
 
-  async createQuestion({
-    partIds,
-    selectOptions,
-    ...data
-  }: CreateQuestionRequestDto): Promise<Questions> {
-    //Todo: 리팩토링!!!!!!!
+  async createQuestion(
+    createQuestionRequestDto: CreateQuestionRequestDto,
+  ): Promise<Questions> {
     return await this.commonService.transaction(async () => {
-      const question = await this.questionRepository.save(data);
-
-      if (data.type == 'CHOICE' || data.type == 'CHECKBOX') {
-        if (selectOptions.length == 0) {
-          throw new BadRequestException('빈 데이터');
-        }
-        await Promise.all(
-          selectOptions.map(async (selectOption) => {
-            await this.selectOptionsRepository.save({
-              ...selectOption,
-              questionId: question.id,
-            });
-          }),
-        );
-      }
-
-      await Promise.all(
-        partIds.map(async (partId) => {
-          await this.partQuestionRepository.save({
-            partId,
-            questionId: question.id,
-          });
-        }),
+      const questionSaveStrategy = questionSaveStrategyFactory(
+        createQuestionRequestDto,
       );
-      return await this.getQuestion(question.id);
+      const questionId = await questionSaveStrategy.saveQuestion(
+        this.questionRepository,
+        this.partQuestionRepository,
+        this.selectOptionsRepository,
+      );
+      return await this.getQuestion(questionId);
     });
   }
 
