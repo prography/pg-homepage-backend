@@ -12,11 +12,7 @@ export class ApplicationBaseService {
   ) {}
 
   async saveAnswers(answers: Answers[]) {
-    return await Promise.all(
-      answers.map((answer) => {
-        this.answersRepository.save(answer);
-      }),
-    );
+    return await this.answersRepository.save(answers);
   }
 
   async save(application: Applications) {
@@ -28,12 +24,7 @@ export class ApplicationBaseService {
   }
 
   async findById(applicationId: number): Promise<Applications> {
-    return await this.applicationRepository.findOne({
-      where: { id: applicationId },
-      relations: {
-        answers: true,
-      },
-    });
+    return await this.applicationRepository.findById(applicationId);
   }
 
   async deleteById(applicationId: number): Promise<{ affected?: number }> {
@@ -62,19 +53,10 @@ export class ApplicationBaseService {
     status?: string,
     generationId?: string,
   ): Promise<Applications[]> {
-    const queryBuilder =
-      this.applicationRepository.createQueryBuilder('application');
-    if (partId) {
-      queryBuilder.where('application.part = :partId', { partId });
-    }
-    if (status) {
-      queryBuilder.andWhere('application.status = :status', { status });
-    }
-    if (generationId) {
-      queryBuilder.andWhere('application.generation = :generationId', {
-        generationId,
-      });
-    }
-    return await queryBuilder.getMany();
+    return await this.applicationRepository.findWithQuery(
+      partId,
+      status,
+      generationId,
+    );
   }
 }

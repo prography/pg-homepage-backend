@@ -55,6 +55,7 @@ export class ApplicationService {
       return application;
     });
   }
+
   private validateGeneration(
     applicationCreateDto: ApplicationCreateDto,
     generation: GenerationGetCurrentResponseDto,
