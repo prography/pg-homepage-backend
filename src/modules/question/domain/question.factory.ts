@@ -5,7 +5,7 @@ import { LongQuestion } from './long-question.strategy';
 import { QuestionStrategy } from './question.strategy';
 import { ShortQuestion } from './short-question.strategy';
 
-export function questionSaveStrategy(
+export function questionSaveStrategyFactory(
   createQuestionRequestDto: CreateQuestionRequestDto,
 ): QuestionStrategy {
   if (createQuestionRequestDto.type == 'CHECKBOX') {
