@@ -36,12 +36,12 @@ export class ChoiceQuestion implements QuestionStrategy {
     partQuestionRepository: PartQuestionRepository,
     selectOptionsRepository: SelectOptionsRepository,
   ): Promise<number> {
-    const question = await questionRepository.save(this.data);
+    const { id } = await questionRepository.save(this.data);
     await Promise.all(
       this.selectOptions.map(async (selectOption) => {
         await selectOptionsRepository.save({
           ...selectOption,
-          questionId: question.id,
+          questionId: id,
         });
       }),
     );
@@ -49,10 +49,10 @@ export class ChoiceQuestion implements QuestionStrategy {
       this.partIds.map(async (partId) => {
         await partQuestionRepository.save({
           partId,
-          questionId: question.id,
+          questionId: id,
         });
       }),
     );
-    return question.id;
+    return id;
   }
 }

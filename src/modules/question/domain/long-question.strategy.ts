@@ -34,15 +34,15 @@ export class LongQuestion implements QuestionStrategy {
     questionRepository: QuestionRepository,
     partQuestionRepository: PartQuestionRepository,
   ): Promise<number> {
-    const question = await questionRepository.save(this.data);
+    const { id } = await questionRepository.save(this.data);
     await Promise.all(
       this.partIds.map(async (partId) => {
         await partQuestionRepository.save({
           partId,
-          questionId: question.id,
+          questionId: id,
         });
       }),
     );
-    return question.id;
+    return id;
   }
 }
