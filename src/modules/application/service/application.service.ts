@@ -150,9 +150,9 @@ export class ApplicationService {
   ): Promise<Applications> {
     const application = this.createMinimumApplication(generation, part, user);
     application.status = Status.UnEnrolled;
-    const alreadyExistApplication = user.applications.filter(
-      (application) => application.status == Status.UnEnrolled,
-    )[0];
+    const alreadyExistApplication = user.applications
+      .filter((application) => application.status == Status.UnEnrolled)
+      .filter((application) => application.part.id === part.id)[0];
     if (alreadyExistApplication) {
       application.id = alreadyExistApplication.id;
       await this.applicationBaseService.deleteById(alreadyExistApplication.id);
