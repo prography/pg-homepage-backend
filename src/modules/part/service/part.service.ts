@@ -3,13 +3,25 @@ import { Parts } from 'src/infra/entity/Parts.entity';
 import { CreatePartRequestDto } from '../dto/create-part.dto';
 import { UpdatePartRequestDto } from '../dto/update-part.dto';
 import { PartRepository } from '../repository/part.repository';
+import { GenerationService } from '@modules/generation/service/generation.service';
 
 @Injectable()
 export class PartService {
-  constructor(private readonly partRepository: PartRepository) {}
+  constructor(
+    private readonly partRepository: PartRepository,
+    private readonly generationService: GenerationService,
+  ) {}
 
-  async getParts(): Promise<Parts[]> {
-    return this.partRepository.find();
+  async getParts(generationId?: string): Promise<Parts[]> {
+    let targetId: number;
+    if (generationId === undefined) {
+      const generation =
+        await this.generationService.findOneGenerationByCurrentDate();
+      targetId = generation.id;
+    } else {
+      targetId = +generationId;
+    }
+    return this.partRepository.find({ where: { generationId: targetId } });
   }
 
   async createPart(body: CreatePartRequestDto): Promise<Parts> {

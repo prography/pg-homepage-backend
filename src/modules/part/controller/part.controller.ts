@@ -8,6 +8,8 @@ import {
   Delete,
   Body,
   Param,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreatePartRequestDto } from '../dto/create-part.dto';
@@ -26,8 +28,8 @@ export class PartController {
   })
   @ApiOperation({ summary: '전체 파트 조회' })
   @Get()
-  getParts() {
-    return this.partService.getParts();
+  getParts(@Query('generationId') generationId?: string) {
+    return this.partService.getParts(generationId);
   }
 
   @ApiOperation({ summary: '파트 등록' })

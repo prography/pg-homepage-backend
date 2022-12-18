@@ -63,6 +63,9 @@ export class ApplicationService {
     if (applicationCreateDto.generationId != generation.id) {
       throw new NotFoundException('잘못된 기수정보 입니다');
     }
+    if (!generation.isApplying) {
+      throw new NotFoundException('지원 기간이 지났습니다');
+    }
   }
   private async saveFinalVersion(
     generation: Generations,
