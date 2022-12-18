@@ -25,7 +25,10 @@ export class ShortQuestion implements QuestionStrategy {
   }
 
   private validate(): void {
-    if (this.selectOptions?.length != 0) {
+    if (
+      this.selectOptions?.length !== undefined &&
+      this.selectOptions?.length !== 0
+    ) {
       throw new BadRequestException('선택지가 있으면 안됩니다');
     }
   }
