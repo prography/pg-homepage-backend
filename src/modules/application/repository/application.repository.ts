@@ -34,6 +34,7 @@ export class ApplicationRepository extends Repository<Applications> {
         generationId,
       });
     }
+    queryBuilder.innerJoinAndSelect('application.answers', 'answers');
     return await queryBuilder.getMany();
   }
 }
