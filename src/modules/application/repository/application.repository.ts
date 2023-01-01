@@ -35,6 +35,10 @@ export class ApplicationRepository extends Repository<Applications> {
       });
     }
     queryBuilder.innerJoinAndSelect('application.answers', 'answers');
+    queryBuilder.innerJoinAndSelect('answers.question', 'question');
+    queryBuilder.innerJoinAndSelect('question.selectOptions', 'selectOptions');
+    queryBuilder.innerJoinAndSelect('application.user', 'user');
+    queryBuilder.innerJoinAndSelect('application.part', 'part');
     return await queryBuilder.getMany();
   }
 }
