@@ -9,12 +9,15 @@ export class ApplicationRepository extends Repository<Applications> {
   }
 
   async findById(applicationId: number): Promise<Applications> {
-    return await this.findOne({
-      where: { id: applicationId },
-      relations: {
-        answers: true,
-      },
-    });
+    const queryBuilder = this.createQueryBuilder('application');
+    queryBuilder.where('application.id = :id', { id: applicationId });
+    queryBuilder.innerJoinAndSelect('application.answers', 'answers');
+    queryBuilder.innerJoinAndSelect('answers.question', 'question');
+    queryBuilder.innerJoinAndSelect('question.selectOptions', 'selectOptions');
+    queryBuilder.innerJoinAndSelect('application.user', 'user');
+    queryBuilder.innerJoinAndSelect('application.part', 'part');
+
+    return queryBuilder.getOne();
   }
 
   async findWithQuery(
