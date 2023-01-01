@@ -164,6 +164,9 @@ export class ApplicationService {
     const application = await this.applicationBaseService.findById(
       applicationId,
     );
+    if (application === null) {
+      throw new BadRequestException('존재하지 않는 id 입니다');
+    }
     if (application.user.id != userToken.userId) {
       throw new ForbiddenException('권한이 없습니다');
     }
