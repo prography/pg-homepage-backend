@@ -13,6 +13,9 @@ export class Answers {
   @ManyToOne(() => Applications, (application) => application.answers)
   application: Applications;
 
-  @ManyToOne(() => Questions, (question) => question.answers)
+  @ManyToOne(() => Questions, (question) => question.answers, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   question: Questions;
 }
