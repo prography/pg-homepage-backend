@@ -56,7 +56,10 @@ export class Questions {
   selectOptions: SelectOptions[];
 
   @ApiHideProperty()
-  @OneToMany(() => Answers, (answer) => answer.question)
+  @OneToMany(() => Answers, (answer) => answer.question, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   answers: Answers[];
 
   @ApiHideProperty()
