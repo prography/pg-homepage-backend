@@ -11,9 +11,9 @@ export class ApplicationRepository extends Repository<Applications> {
   async findById(applicationId: number): Promise<Applications> {
     const queryBuilder = this.createQueryBuilder('application');
     queryBuilder.where('application.id = :id', { id: applicationId });
-    queryBuilder.innerJoinAndSelect('application.answers', 'answers');
-    queryBuilder.innerJoinAndSelect('answers.question', 'question');
-    queryBuilder.innerJoinAndSelect('question.selectOptions', 'selectOptions');
+    queryBuilder.leftJoinAndSelect('application.answers', 'answers');
+    queryBuilder.leftJoinAndSelect('answers.question', 'question');
+    queryBuilder.leftJoinAndSelect('question.selectOptions', 'selectOptions');
     queryBuilder.innerJoinAndSelect('application.user', 'user');
     queryBuilder.innerJoinAndSelect('application.part', 'part');
 
@@ -37,9 +37,9 @@ export class ApplicationRepository extends Repository<Applications> {
         generationId,
       });
     }
-    queryBuilder.innerJoinAndSelect('application.answers', 'answers');
-    queryBuilder.innerJoinAndSelect('answers.question', 'question');
-    queryBuilder.innerJoinAndSelect('question.selectOptions', 'selectOptions');
+    queryBuilder.leftJoinAndSelect('application.answers', 'answers');
+    queryBuilder.leftJoinAndSelect('answers.question', 'question');
+    queryBuilder.leftJoinAndSelect('question.selectOptions', 'selectOptions');
     queryBuilder.innerJoinAndSelect('application.user', 'user');
     queryBuilder.innerJoinAndSelect('application.part', 'part');
     return await queryBuilder.getMany();
