@@ -5,6 +5,6 @@ import { ApplicationBaseService } from './service/application-base.service';
 
 @Module({
   providers: [ApplicationRepository, AnswersRepository, ApplicationBaseService],
-  exports: [ApplicationBaseService],
+  exports: [ApplicationBaseService, AnswersRepository],
 })
 export class ApplicationBaseModule {}

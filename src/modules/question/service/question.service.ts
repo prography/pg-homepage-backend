@@ -1,6 +1,9 @@
+import { AnswersRepository } from '@modules/application/repository/answer.repository';
 import { CommonService } from '@modules/common/common.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Answers } from 'src/infra/entity/Answers.entity';
 import { Questions } from 'src/infra/entity/Questions.entity';
+import { SelectOptions } from 'src/infra/entity/SelectOptions.entity';
 import { questionSaveStrategyFactory } from '../domain/question.factory';
 import {
   CreateQuestionRequestDto,
@@ -18,6 +21,7 @@ export class QuestionService {
     private readonly partQuestionRepository: PartQuestionRepository,
     private readonly selectOptionsRepository: SelectOptionsRepository,
     private readonly commonService: CommonService,
+    private readonly answersRepository: AnswersRepository,
   ) {}
 
   async getQuestions(partIds: number[]): Promise<Questions[]> {
@@ -64,6 +68,7 @@ export class QuestionService {
   }
 
   async deleteQuestion(id: number) {
+    await this.answersRepository.delete({ questionId: id });
     await this.questionRepository.delete(id);
     return { success: true };
   }

@@ -10,6 +10,9 @@ export class Answers {
   @Column()
   value: string;
 
+  @Column()
+  questionId: number;
+
   @ManyToOne(() => Applications, (application) => application.answers)
   application: Applications;
 
