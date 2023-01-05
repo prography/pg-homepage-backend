@@ -1,4 +1,5 @@
 import { AnswersRepository } from '@modules/application/repository/answer.repository';
+import { ApplicationBaseService } from '@modules/application/service/application-base.service';
 import { CommonService } from '@modules/common/common.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Answers } from 'src/infra/entity/Answers.entity';
@@ -21,7 +22,7 @@ export class QuestionService {
     private readonly partQuestionRepository: PartQuestionRepository,
     private readonly selectOptionsRepository: SelectOptionsRepository,
     private readonly commonService: CommonService,
-    private readonly answersRepository: AnswersRepository,
+    private readonly applicationBaseService: ApplicationBaseService,
   ) {}
 
   async getQuestions(partIds: number[]): Promise<Questions[]> {
@@ -68,7 +69,9 @@ export class QuestionService {
   }
 
   async deleteQuestion(id: number) {
-    await this.answersRepository.delete({ questionId: id });
+    await this.applicationBaseService.deleteAnswersByQuestionId({
+      questionId: id,
+    });
     await this.questionRepository.delete(id);
     return { success: true };
   }
