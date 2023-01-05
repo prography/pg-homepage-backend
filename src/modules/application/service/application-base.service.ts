@@ -59,4 +59,7 @@ export class ApplicationBaseService {
       generationId,
     );
   }
+  async deleteAnswersByQuestionId({ questionId }: { questionId: number }) {
+    return await this.answersRepository.delete({ questionId: questionId });
+  }
 }
