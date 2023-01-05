@@ -1,10 +1,7 @@
-import { AnswersRepository } from '@modules/application/repository/answer.repository';
 import { ApplicationBaseService } from '@modules/application/service/application-base.service';
 import { CommonService } from '@modules/common/common.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Answers } from 'src/infra/entity/Answers.entity';
 import { Questions } from 'src/infra/entity/Questions.entity';
-import { SelectOptions } from 'src/infra/entity/SelectOptions.entity';
 import { questionSaveStrategyFactory } from '../domain/question.factory';
 import {
   CreateQuestionRequestDto,
