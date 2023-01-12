@@ -28,19 +28,12 @@ export class ApplicationBaseService {
   }
 
   async deleteById(applicationId: number): Promise<{ affected?: number }> {
-    const application = await this.applicationRepository.findOne({
-      where: {
-        id: applicationId,
-      },
-      relations: {
-        answers: true,
-      },
-    });
-    await Promise.all(
-      application.answers.map(async (answer) => {
-        await this.answersRepository.delete(answer.id);
-      }),
+    const application =
+      await this.applicationRepository.findWithIdAndJoinAnswer(applicationId);
+    await this.answersRepository.deleteByIds(
+      application.answers.map((answer) => answer.id),
     );
+
     return await this.applicationRepository.delete(applicationId);
   }
 

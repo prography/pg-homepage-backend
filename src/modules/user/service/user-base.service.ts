@@ -23,9 +23,7 @@ export class UserBaseService {
   }
 
   async findById(userId: number): Promise<Users> {
-    return await this.userRepository.findOne({
-      where: { id: userId },
-    });
+    return await this.userRepository.findOneById(userId);
   }
 
   async update(
@@ -40,11 +38,9 @@ export class UserBaseService {
   }
 
   async findUserAndApplicationsOrThrow(userId: number): Promise<Users> {
-    const user = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.id = :userId', { userId })
-      .leftJoinAndSelect('user.applications', 'applications')
-      .getOne();
+    const user = await this.userRepository.findOneByIdAndSelectApplications(
+      userId,
+    );
     if (!user) {
       throw new NotFoundException('없는 사용자 입니다');
     }
