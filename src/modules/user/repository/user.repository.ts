@@ -35,6 +35,7 @@ export class UserRepository extends Repository<Users> {
     return await this.createQueryBuilder('user')
       .where('user.id = :userId', { userId })
       .leftJoinAndSelect('user.applications', 'applications')
+      .leftJoinAndSelect('applications.part', 'part')
       .getOne();
   }
 }
