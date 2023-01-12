@@ -7,6 +7,16 @@ export class ApplicationRepository extends Repository<Applications> {
   constructor(private readonly dataSource: DataSource) {
     super(Applications, dataSource.createEntityManager());
   }
+  async findWithIdAndJoinAnswer(applicationId: number) {
+    return await this.findOne({
+      where: {
+        id: applicationId,
+      },
+      relations: {
+        answers: true,
+      },
+    });
+  }
 
   async findById(applicationId: number): Promise<Applications> {
     const queryBuilder = this.createQueryBuilder('application');
