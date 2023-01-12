@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as moment from 'moment';
 import { Generations } from 'src/infra/entity/Generations.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -55,6 +55,13 @@ export class GenerationService {
       )
     ) {
       currentGenerationState.isActive = true;
+    }
+
+    if (
+      !currentGenerationState.isApplying &&
+      !currentGenerationState.isActive
+    ) {
+      throw new HttpException('활동 기수가 없습니다.', HttpStatus.NOT_FOUND);
     }
 
     return { ...currentGeneration, ...currentGenerationState };
