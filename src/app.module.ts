@@ -46,7 +46,7 @@ import { Users } from './infra/entity/Users.entity';
           Users,
           PartsQuestions,
         ],
-        synchronize: false,
+        synchronize: true,
         timezone: '+09:00',
       }),
     }),

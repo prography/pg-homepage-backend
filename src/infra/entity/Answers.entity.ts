@@ -7,7 +7,7 @@ export class Answers {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'longtext' })
   value: string;
 
   @Column()
