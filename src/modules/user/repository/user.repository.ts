@@ -24,4 +24,18 @@ export class UserRepository extends Repository<Users> {
       })
       .getOne();
   }
+
+  async findOneById(userId: number) {
+    return await this.findOne({
+      where: { id: userId },
+    });
+  }
+
+  async findOneByIdAndSelectApplications(userId: number) {
+    return await this.createQueryBuilder('user')
+      .where('user.id = :userId', { userId })
+      .leftJoinAndSelect('user.applications', 'applications')
+      .leftJoinAndSelect('applications.part', 'part')
+      .getOne();
+  }
 }

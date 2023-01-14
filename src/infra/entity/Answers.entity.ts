@@ -7,7 +7,7 @@ export class Answers {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'longtext' })
   value: string;
 
   @Column()
@@ -16,9 +16,6 @@ export class Answers {
   @ManyToOne(() => Applications, (application) => application.answers)
   application: Applications;
 
-  @ManyToOne(() => Questions, (question) => question.answers, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @ManyToOne(() => Questions, (question) => question.answers)
   question: Questions;
 }
